@@ -1,0 +1,57 @@
+services:
+  #Database section
+  orderdb:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+
+  productdb:
+    image: mysql:8.0.40
+
+  customerdb:
+    image: postgres:alpine3.21
+
+  basketdb:
+    image: redis:alpine
+
+  inventorydb:
+    image: mongo
+
+  #Infrastructure section
+  rabbitmq:
+    image: rabbitmq:4.0.5-management-alpine
+
+  pgadmin:
+    image: dpage/pgadmin4
+
+  portainer:
+    image: portainer/portainer-ce
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.26
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.17.26
+
+#Network section
+networks:
+  default:
+    name: aspnet_microservices
+    driver: bridge
+
+#Volume section
+volumes:
+  sqlserver_data:
+    name: sqlserver_data
+  mysql_data:
+    name: mysql_data
+  postgres_data:
+    name: postgres_data
+  portainer_data:
+    name: portainer_data
+  elasticsearch_data:
+    name: elasticsearch_data
+  jaeger_data:
+    name: jaeger_data
+  mongo_data:
+    name: mongo_data
+  pgadmin_data:
+    name: pgadmin_data
