@@ -5,8 +5,8 @@ services:
   orderdb:
     container_name: orderdb
     environment:
-      SA_PASSWORD: "Admin3000"
-      ACCEPT_EULA: "Y"
+      - MSSQL_SA_PASSWORD=Admin3000
+      - ACCEPT_EULA=Y
     restart: always
     volumes:
       - sqlserver_data:/var/lib/sqlserver/data
@@ -17,8 +17,8 @@ services:
   productdb:
     container_name: productdb
     environment:
-      MYSQL_PASSWORD: "Admin3000"
-      MYSQL_ROOT_PASSWORD: "admin"
+      - MYSQL_ROOT_USER=thomas
+      - MYSQL_ROOT_PASSWORD=Admin3000
     restart: always
     volumes:
       - mysql_data:/var/lib/mysql
@@ -29,7 +29,6 @@ services:
   customerdb:
     container_name: customerdb
     environment:
-      - POSTGRES_USER=thomas
       - POSTGRES_PASSWORD=Admin3000
       - POSTGRES_DB=CustomerDb
     restart: always
@@ -44,7 +43,7 @@ services:
     restart: always
     ports:
       - "6379:6379"
-  
+
   #inventorydb: mongo
   inventorydb:
     container_name: inventorydb

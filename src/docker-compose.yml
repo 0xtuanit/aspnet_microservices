@@ -4,20 +4,20 @@ services:
     image: mcr.microsoft.com/mssql/server:2022-latest
 
   productdb:
-    image: mysql:8.0.40
+    image: bitnami/mysql:8.4.3
 
   customerdb:
     image: postgres:alpine3.21
 
   basketdb:
-    image: redis:alpine
+    image: redis:7.2.7-alpine3.21
 
   inventorydb:
     image: mongo
 
   #Infrastructure section
   rabbitmq:
-    image: rabbitmq:4.0.5-management-alpine
+    image: bitnami/rabbitmq:4.0.5
 
   pgadmin:
     image: dpage/pgadmin4

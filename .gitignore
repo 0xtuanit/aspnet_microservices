@@ -119,3 +119,4 @@ src/.vs/config/applicationhost.config
 
 # .DS_Store
 .DS_Store
+.fake
