@@ -17,7 +17,8 @@ services:
   productdb:
     container_name: productdb
     environment:
-      MYSQL_ROOT_PASSWORD: "Admin3000"
+      MYSQL_PASSWORD: "Admin3000"
+      MYSQL_ROOT_PASSWORD: "admin"
     restart: always
     volumes:
       - mysql_data:/var/lib/mysql
@@ -28,7 +29,7 @@ services:
   customerdb:
     container_name: customerdb
     environment:
-      - POSTGRES_USER=admin
+      - POSTGRES_USER=thomas
       - POSTGRES_PASSWORD=Admin3000
       - POSTGRES_DB=CustomerDb
     restart: always
