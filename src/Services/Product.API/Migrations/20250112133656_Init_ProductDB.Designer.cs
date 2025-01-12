@@ -12,7 +12,7 @@ using Product.API.Persistence;
 namespace Product.API.Migrations
 {
     [DbContext(typeof(ProductContext))]
-    [Migration("20250112042020_Init_ProductDB")]
+    [Migration("20250112133656_Init_ProductDB")]
     partial class Init_ProductDB
     {
         /// <inheritdoc />
@@ -59,6 +59,9 @@ namespace Product.API.Migrations
                         .HasColumnType("nvarchar(255)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("No")
+                        .IsUnique();
 
                     b.ToTable("Products");
                 });
