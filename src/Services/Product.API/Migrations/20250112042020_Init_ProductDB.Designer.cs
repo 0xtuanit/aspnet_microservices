@@ -12,7 +12,7 @@ using Product.API.Persistence;
 namespace Product.API.Migrations
 {
     [DbContext(typeof(ProductContext))]
-    [Migration("20250111043111_Init_ProductDB")]
+    [Migration("20250112042020_Init_ProductDB")]
     partial class Init_ProductDB
     {
         /// <inheritdoc />

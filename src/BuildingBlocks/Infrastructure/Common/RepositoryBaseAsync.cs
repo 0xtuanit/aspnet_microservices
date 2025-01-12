@@ -6,8 +6,8 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Infrastructure.Common;
 
-public class RepositoryBaseAsyncAsync<T, K, TContext> : IRepositoryBaseAsync<T, K, TContext> where T : EntityBase<K>
-where TContext : DbContext
+public class RepositoryBaseAsyncAsync<T, TK, TContext> : IRepositoryBaseAsync<T, TK, TContext> where T : EntityBase<TK>
+    where TContext : DbContext
 {
     private readonly TContext _dbContext;
     private readonly IUnitOfWork<TContext> _unitOfWork;
@@ -17,6 +17,7 @@ where TContext : DbContext
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
     }
+
     public IQueryable<T> FindAll(bool trackChanges = false) =>
         !trackChanges
             ? _dbContext.Set<T>().AsNoTracking()
@@ -25,7 +26,8 @@ where TContext : DbContext
     public IQueryable<T> FindAll(bool trackChanges = false, params Expression<Func<T, object>>[] includeProperties)
     {
         var items = FindAll(trackChanges);
-        items = includeProperties.Aggregate(items, (current, includeProperty) => current.Include(includeProperty));
+        items = includeProperties.Aggregate(items, (current, includeProperty) =>
+            current.Include(includeProperty));
         return items;
     }
 
@@ -34,19 +36,20 @@ where TContext : DbContext
             ? _dbContext.Set<T>().Where(expression).AsNoTracking()
             : _dbContext.Set<T>().Where(expression);
 
-    public IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression, bool trackChanges = false, params Expression<Func<T, object>>[] includeProperties)
+    public IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression, bool trackChanges = false,
+        params Expression<Func<T, object>>[] includeProperties)
     {
         var items = FindByCondition(expression, trackChanges);
         items = includeProperties.Aggregate(items, (current, includeProperty) => current.Include(includeProperty));
         return items;
     }
 
-    public async Task<T?> GetByIdAsync(K id) =>
-        await FindByCondition(x => x.Equals(id))
+    public async Task<T?> GetByIdAsync(TK id) => await FindByCondition(x => x.Id != null && x.Id.Equals(id))
         .FirstOrDefaultAsync();
 
-    public async Task<T?> GetByIdAsync(K id, params Expression<Func<T, object>>[] includeProperties) =>
-        await FindByCondition(x => x.Equals(id), trackChanges: false, includeProperties).FirstOrDefaultAsync();
+    public async Task<T?> GetByIdAsync(TK id, params Expression<Func<T, object>>[] includeProperties) =>
+        await FindByCondition(x => x.Id != null && x.Id.Equals(id), trackChanges: false, includeProperties)
+            .FirstOrDefaultAsync();
 
     public Task<IDbContextTransaction> BeginTransactionAsync() => _dbContext.Database.BeginTransactionAsync();
 
@@ -58,13 +61,13 @@ where TContext : DbContext
 
     public Task RollbackTransactionAsync() => _dbContext.Database.RollbackTransactionAsync();
 
-    public async Task<K> CreateAsync(T entity)
+    public async Task<TK> CreateAsync(T entity)
     {
         await _dbContext.Set<T>().AddAsync(entity);
         return entity.Id;
     }
 
-    public async Task<IList<K>> CreateListAsync(IEnumerable<T> entities)
+    public async Task<IList<TK>> CreateListAsync(IEnumerable<T> entities)
     {
         await _dbContext.Set<T>().AddRangeAsync(entities);
         return entities.Select(x => x.Id).ToList();
@@ -78,6 +81,7 @@ where TContext : DbContext
 
         return Task.CompletedTask;
     }
+
     public Task UpdateListAsync(IEnumerable<T> entities) => _dbContext.Set<T>().AddRangeAsync(entities);
 
     public Task DeleteAsync(T entity)

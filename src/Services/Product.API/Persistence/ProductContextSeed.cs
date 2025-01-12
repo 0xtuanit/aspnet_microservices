@@ -35,6 +35,14 @@ public class ProductContextSeed
                 Summary = "Carbuncle of trunk",
                 Description = "Carbuncle of trunk",
                 Price = (decimal)114728.21
+            },
+            new()
+            {
+                No = "Apple",
+                Name = "Iphone 16 Pro",
+                Summary = "IP16 Pro",
+                Description = "The latest version of Iphone",
+                Price = (decimal)1000
             }
         };
     }

@@ -1,4 +1,3 @@
-
 using Contracts.Domains.Interfaces;
 
 namespace Contracts.Domains;
