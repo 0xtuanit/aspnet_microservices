@@ -103,3 +103,16 @@ services:
       - elasticsearch
     ports:
       - "5601:5601"
+        
+  # microservices api section
+  product.api:
+    container_name: product.api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - "ConnectionStrings:DefaultConnectionString=Server=productdb;Port=3306;Database=ProductDB;Uid=thomas;Pwd=Admin3000;"
+    depends_on:
+      - productdb
+    ports:
+      - "6002:80"
+    restart: always
