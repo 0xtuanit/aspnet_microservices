@@ -1,4 +1,5 @@
 using Contracts.Domains.Interfaces;
+using Customer.API.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Customer.API.Persistence;

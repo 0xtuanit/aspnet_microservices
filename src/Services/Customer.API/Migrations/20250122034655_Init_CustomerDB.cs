@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
@@ -16,14 +15,12 @@ namespace Customer.API.Migrations
                 name: "Customers",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     UserName = table.Column<string>(type: "text", nullable: false),
                     FirstName = table.Column<string>(type: "varchar(100)", nullable: false),
                     LastName = table.Column<string>(type: "varchar(150)", nullable: false),
-                    EmailAddress = table.Column<string>(type: "text", nullable: false),
-                    CreatedDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    LastModifiedDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
+                    EmailAddress = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {

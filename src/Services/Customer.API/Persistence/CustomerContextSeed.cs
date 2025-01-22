@@ -1,3 +1,4 @@
+using Customer.API.Entities;
 using Microsoft.EntityFrameworkCore;
 using ILogger = Serilog.ILogger;
 

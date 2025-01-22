@@ -1,17 +1,22 @@
 using Common.Logging;
+using Contracts.Common.Interfaces;
 using Customer.API.Persistence;
+using Customer.API.Repositories;
+using Customer.API.Repositories.Interfaces;
+using Customer.API.Services;
+using Customer.API.Services.Interfaces;
+using Infrastructure.Common;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
-// builder.Host.UseSerilog(Serilogger.Configure);
+builder.Host.UseSerilog(Serilogger.Configure);
 
 // Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateBootstrapLogger();
 Log.Information("Start Customer API up");
 
 try
 {
-    builder.Host.UseSerilog(Serilogger.Configure);
     // Add services to the container.
     builder.Services.AddControllers();
 
@@ -24,7 +29,25 @@ try
         options => options.UseNpgsql(connectionString)
     );
 
+    // We have to configure all these from declaring ICustomer repo & ICustomer service
+    builder.Services.AddScoped<ICustomerRepository, CustomerRepository>()
+        .AddScoped(typeof(IRepositoryBaseAsync<,,>), typeof(RepositoryBaseAsync<,,>))
+        .AddScoped(typeof(IUnitOfWork<>), typeof(UnitOfWork<>))
+        .AddScoped<ICustomerService, CustomerService>();
+
     var app = builder.Build();
+
+    // Map URL following minimal API style
+    app.MapGet("/", () => "Welcome to Customer API!");
+    app.MapGet("/api/customers",
+        async (ICustomerService customerService) => await customerService.GetCustomersAsync());
+    app.MapGet("/api/customers/{username}",
+        async (string username, ICustomerService customerService) =>
+            await customerService.GetCustomerByUserNameAsync(username));
+
+    // app.MapPost("/", () => "Welcome to Customer API!");
+    // app.MapPut("/", () => "Welcome to Customer API!");
+    // app.MapDelete("/", () => "Welcome to Customer API!");
 
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())

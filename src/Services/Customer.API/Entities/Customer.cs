@@ -4,7 +4,7 @@ using Contracts.Domains;
 
 namespace Customer.API.Entities;
 
-public class Customer : EntityAuditBase<long>
+public class Customer : EntityBase<int>
 {
     [Required] public string UserName { get; set; }
 
