@@ -1,5 +1,6 @@
 using Common.Logging;
 using Contracts.Common.Interfaces;
+using Customer.API.Controllers;
 using Customer.API.Persistence;
 using Customer.API.Repositories;
 using Customer.API.Repositories.Interfaces;
@@ -41,12 +42,8 @@ try
     app.MapGet("/", () => "Welcome to Customer API!");
     // app.MapGet("/api/customers",
     //     async (ICustomerService customerService) => await customerService.GetCustomersAsync());
-    app.MapGet("/api/customers/{username}",
-        async (string username, ICustomerService customerService) =>
-        {
-            var customer = await customerService.GetCustomerByUserNameAsync(username);
-            return customer != null ? Results.Ok(customer) : Results.NotFound();
-        });
+
+    app.MapCustomersApi();
 
     // app.MapPost("/api/customers",
     //     async (Customer.API.Entities.Customer customer, ICustomerRepository customerRepository) =>

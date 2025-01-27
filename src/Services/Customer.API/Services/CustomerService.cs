@@ -13,8 +13,8 @@ public class CustomerService : ICustomerService
     }
 
     // Controller call Service (different from Controller directly calling repo of Product.API)
-    public async Task<IResult?> GetCustomerByUserNameAsync(string username) =>
-        Results.Ok(await _repository.GetCustomerByUserNameAsync(username));
+    public async Task<IResult?> GetCustomerByUsernameAsync(string username) =>
+        Results.Ok(await _repository.GetCustomerByUsernameAsync(username));
 
     // public async Task<IResult?> GetCustomersAsync() => Results.Ok(await _repository.GetCustomersAsync());
 }
