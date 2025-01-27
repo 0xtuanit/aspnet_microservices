@@ -12,9 +12,9 @@ public class CustomerService : ICustomerService
         _repository = repository;
     }
 
-    // Controller call Service (Controller call repo directly in Product.API)
-    public async Task<IResult> GetCustomerByUserNameAsync(string username) =>
+    // Controller call Service (different from Controller directly calling repo of Product.API)
+    public async Task<IResult?> GetCustomerByUserNameAsync(string username) =>
         Results.Ok(await _repository.GetCustomerByUserNameAsync(username));
 
-    public async Task<IResult> GetCustomersAsync() => Results.Ok(await _repository.GetCustomersAsync());
+    // public async Task<IResult?> GetCustomersAsync() => Results.Ok(await _repository.GetCustomersAsync());
 }

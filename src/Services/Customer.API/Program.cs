@@ -29,7 +29,7 @@ try
         options => options.UseNpgsql(connectionString)
     );
 
-    // We have to configure all these from declaring ICustomer repo & ICustomer service
+    // We have to configure all these for declaring ICustomer repo & ICustomer service
     builder.Services.AddScoped<ICustomerRepository, CustomerRepository>()
         .AddScoped(typeof(IRepositoryBaseAsync<,,>), typeof(RepositoryBaseAsync<,,>))
         .AddScoped(typeof(IUnitOfWork<>), typeof(UnitOfWork<>))
@@ -39,15 +39,44 @@ try
 
     // Map URL following minimal API style
     app.MapGet("/", () => "Welcome to Customer API!");
-    app.MapGet("/api/customers",
-        async (ICustomerService customerService) => await customerService.GetCustomersAsync());
+    // app.MapGet("/api/customers",
+    //     async (ICustomerService customerService) => await customerService.GetCustomersAsync());
     app.MapGet("/api/customers/{username}",
         async (string username, ICustomerService customerService) =>
-            await customerService.GetCustomerByUserNameAsync(username));
+        {
+            var customer = await customerService.GetCustomerByUserNameAsync(username);
+            return customer != null ? Results.Ok(customer) : Results.NotFound();
+        });
 
-    // app.MapPost("/", () => "Welcome to Customer API!");
-    // app.MapPut("/", () => "Welcome to Customer API!");
-    // app.MapDelete("/", () => "Welcome to Customer API!");
+    // app.MapPost("/api/customers",
+    //     async (Customer.API.Entities.Customer customer, ICustomerRepository customerRepository) =>
+    //     {
+    //         customerRepository.CreateAsync(customer);
+    //         customerRepository.SaveChangesAsync();
+    //     });
+    //
+    // app.MapDelete("/api/customers/{id}", async (int id, ICustomerRepository customerRepository) =>
+    // {
+    //     var customer = await customerRepository
+    //         .FindByCondition(x => x.Id.Equals(id))
+    //         .SingleOrDefaultAsync();
+    //
+    //     if (customer == null) return Results.NotFound();
+    //
+    //     await customerRepository.DeleteAsync(customer);
+    //     Console.WriteLine("Before SaveChangesAsync");
+    //     await customerRepository.SaveChangesAsync();
+    //     Console.WriteLine("After SaveChangesAsync");
+    //
+    //     return Results.NoContent();
+    // });
+
+    // Looks the same as MapPost above.
+    // But will use DTO, not directly use Entities (=> no need to use all fields of Entities)
+    // app.MapPut("/api/customers/{id}", async () =>
+    // {
+    //     
+    // });
 
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())
@@ -62,9 +91,7 @@ try
 
     app.MapControllers();
 
-    app.SeedCustomerData();
-
-    app.Run();
+    app.SeedCustomerData().Run();
 }
 catch (Exception ex)
 {

@@ -87,6 +87,7 @@ public class RepositoryBaseAsync<T, TK, TContext> : IRepositoryBaseAsync<T, TK, 
     public Task DeleteAsync(T entity)
     {
         _dbContext.Set<T>().Remove(entity);
+        Console.WriteLine("DeleteAsync finished");
         return Task.CompletedTask;
     }
 
