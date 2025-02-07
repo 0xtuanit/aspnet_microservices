@@ -1,5 +1,6 @@
 using Common.Logging;
 using Contracts.Common.Interfaces;
+using Customer.API;
 using Customer.API.Controllers;
 using Customer.API.Persistence;
 using Customer.API.Repositories;
@@ -24,6 +25,7 @@ try
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
+    builder.Services.AddAutoMapper(cfg => cfg.AddProfile(new MappingProfile()));
 
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnectionString");
     builder.Services.AddDbContext<CustomerContext>(
@@ -32,14 +34,13 @@ try
 
     // We have to configure all these for declaring ICustomer repo & ICustomer service
     builder.Services.AddScoped<ICustomerRepository, CustomerRepository>()
-        .AddScoped(typeof(IRepositoryBaseAsync<,,>), typeof(RepositoryBaseAsync<,,>))
-        .AddScoped(typeof(IUnitOfWork<>), typeof(UnitOfWork<>))
+        .AddScoped(typeof(IRepositoryQueryBase<,,>), typeof(RepositoryQueryBase<,,>))
         .AddScoped<ICustomerService, CustomerService>();
 
     var app = builder.Build();
 
     // Map URL following minimal API style
-    app.MapGet("/", () => "Welcome to Customer API!");
+    app.MapGet("/", () => $"Welcome to {builder.Environment.ApplicationName}!");
     // app.MapGet("/api/customers",
     //     async (ICustomerService customerService) => await customerService.GetCustomersAsync());
 
@@ -79,7 +80,11 @@ try
     if (app.Environment.IsDevelopment())
     {
         app.UseSwagger();
-        app.UseSwaggerUI();
+        app.UseSwaggerUI(c =>
+        {
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json",
+                $"{builder.Environment.ApplicationName} v1"));
+        });
     }
 
     app.UseHttpsRedirection();

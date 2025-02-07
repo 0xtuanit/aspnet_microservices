@@ -8,7 +8,7 @@ public static class AutoMapperExtensions
     public static IMappingExpression<TSource, TDestination> IgnoreAllNonExisting<TSource, TDestination>
         (this IMappingExpression<TSource, TDestination> expression)
     {
-        var flags = BindingFlags.Public | BindingFlags.Instance;
+        const BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
         var sourceType = typeof(TSource);
         var destinationProperties = typeof(TDestination).GetProperties(flags);
 

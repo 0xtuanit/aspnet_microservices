@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Contracts.Common.Interfaces;
 
-public interface IRepositoryQueryBase<T, in TK, TContext> where T : EntityBase<TK> where TContext : DbContext
+public interface IRepositoryQueryBase<T, TK, TContext> where T : EntityBase<TK> where TContext : DbContext
 {
     IQueryable<T> FindAll(bool trackChanges = false);
 
