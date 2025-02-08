@@ -15,6 +15,9 @@ try
     // Add services to the container.
     builder.Host.UseSerilog(Serilogger.Configure);
     builder.Host.AddAppConfigurations();
+    builder.Services.ConfigureServices();
+    builder.Services.Configure<RouteOptions>(options
+        => options.LowercaseUrls = true);
 
     builder.Services.AddControllers();
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
