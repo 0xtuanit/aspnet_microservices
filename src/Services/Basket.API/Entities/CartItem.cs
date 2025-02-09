@@ -13,8 +13,8 @@ namespace Basket.API.Entities
         public decimal ItemPrice { get; set; }
 
         [Required]
-        public string ItemNo { get; set; }
+        public required string ItemNo { get; set; }
         [Required]
-        public string ItemName { get; set; }
+        public required string ItemName { get; set; }
     }
 }
