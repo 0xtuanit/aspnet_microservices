@@ -1,4 +1,5 @@
 using Common.Logging;
+using Ordering.Infrastructure;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,16 +10,8 @@ Log.Information("Starting Ordering API up");
 
 try
 {
-    // var builder = WebApplication.CreateBuilder(args);
-
-    builder.Host.UseSerilog(configureLogger: (ctx, lc) => lc
-        .WriteTo.Console(
-            outputTemplate:
-            "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}")
-        .Enrich.FromLogContext()
-        .ReadFrom.Configuration(ctx.Configuration));
-
-    // Add services to the container.
+    // Add Services to the container.
+    builder.Services.AddInfrastructureServices(builder.Configuration);
 
     builder.Services.AddControllers();
 
