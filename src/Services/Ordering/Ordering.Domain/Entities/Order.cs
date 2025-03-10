@@ -1,12 +1,16 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Contracts.Domains;
+using Ordering.Domain.Enums;
 
 namespace Ordering.Domain.Entities;
 
 public class Order : EntityAuditBase<long>
 {
-    [Required] public string UserName { get; set; }
+    [Required]
+    [Column(TypeName = "nvarchar(150)")]
+    public string UserName { get; set; }
+
     [Column(TypeName = "decimal(10,2)")] public decimal TotalPrice { get; set; }
 
     [Required]
@@ -25,4 +29,6 @@ public class Order : EntityAuditBase<long>
     [Column(TypeName = "nvarchar(max)")] public string ShippingAddress { get; set; }
 
     [Column(TypeName = "nvarchar(max)")] public string InvoiceAddress { get; set; }
+
+    public EOrderStatus? Status { get; set; }
 }

@@ -16,6 +16,9 @@ public static class ConfigureServices
                 builder => builder.MigrationsAssembly(typeof(OrderContext).Assembly.FullName));
         });
 
+        // Register 'OrderContextSeed' into 'services'
+        services.AddScoped<OrderContextSeed>();
+
         return services;
     }
 }
