@@ -28,7 +28,7 @@ docker-compose -f docker-compose.yml -f docker-compose.override.yml up -d --remo
 ## Application URLs - LOCAL Environment (Docker Container):
 - Product API: http://localhost:6002/api/products
 - Customer API: http://localhost:6003/api/customers
-- Basket API: http://localhost:6003/api/baskets
+- Basket API: http://localhost:6004/api/baskets
 
 ## Docker Application URLs - LOCAL Environment (Docker Container):
 - Portainer: http://localhost:9000 - username: admin ; pass: admin1234
@@ -55,6 +55,7 @@ docker-compose -f docker-compose.yml -f docker-compose.override.yml up -d --remo
 - https://visualstudio.microsoft.com/
 
 ## References URLS
+- https://github.com/jasontaylordev/CleanArchitecture
 
 ## Docker Commands: (cd into folder contain file `docker-compose.yml`, `docker-compose.override.yml`)
 
