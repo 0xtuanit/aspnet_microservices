@@ -44,15 +44,15 @@ public class OrderContextSeed
         }
     }
 
-    public async Task TrySeedAsync()
+    private async Task TrySeedAsync()
     {
         if (!_context.Orders.Any())
         {
             await _context.Orders.AddRangeAsync(
                 new Order
                 {
-                    UserName = "customer1", FirstName = "customer1", LastName = "customer",
-                    EmailAddress = "customer1@email.com",
+                    UserName = "customer1", FirstName = "first_name1", LastName = "last_name1",
+                    EmailAddress = "customer1@gmail.com",
                     ShippingAddress = "Sydney", InvoiceAddress = "Australia", TotalPrice = 250
                 });
         }

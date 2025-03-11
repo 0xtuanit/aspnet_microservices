@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Ordering.Application.Common.Behaviours;
 
+// Wrap all exceptions into here
 public class UnhandledExceptionBehaviour<TRequest, TResponse> :
     IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse>
@@ -21,7 +22,7 @@ public class UnhandledExceptionBehaviour<TRequest, TResponse> :
         {
             return await next();
         }
-        catch (Exception ex)
+        catch (Exception ex) // If any Handler throws an exception, catch and wrap it here
         {
             var requestName = typeof(TRequest).Name;
             _logger.LogError(ex, "Application Request: Unhandled Exception for Request {Name} {@Request}",

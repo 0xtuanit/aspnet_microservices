@@ -20,6 +20,8 @@ public interface IRepositoryQueryBase<T, TK> where T : EntityBase<TK>
     Task<T?> GetByIdAsync(TK id);
 
     Task<T?> GetByIdAsync(TK id, params Expression<Func<T, object>>[] includeProperties);
+    
+    Task<int> SaveChangesAsync();
 }
 
 // For Command
@@ -37,8 +39,6 @@ public interface IRepositoryBaseAsync<T, TK> : IRepositoryQueryBase<T, TK>
     Task DeleteAsync(T entity);
 
     Task DeleteListAsync(IEnumerable<T> entities);
-
-    Task<int> SaveChangesAsync();
 
     Task<IDbContextTransaction> BeginTransactionAsync();
 

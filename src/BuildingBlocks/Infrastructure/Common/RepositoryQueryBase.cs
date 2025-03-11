@@ -48,4 +48,9 @@ public class RepositoryQueryBase<T, TK, TContext> : IRepositoryQueryBase<T, TK, 
     public async Task<T?> GetByIdAsync(TK id, params Expression<Func<T, object>>[] includeProperties) =>
         await FindByCondition(x => x.Id != null && x.Id.Equals(id), trackChanges: false, includeProperties)
             .FirstOrDefaultAsync();
+
+    public Task<int> SaveChangesAsync()
+    {
+        throw new NotImplementedException();
+    }
 }

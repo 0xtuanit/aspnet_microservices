@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Ordering.Application.Common.Behaviours;
 
+// Check performance of each request
 public class PerformanceBehaviour<TRequest, TResponse> :
     IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse>
@@ -24,6 +25,7 @@ public class PerformanceBehaviour<TRequest, TResponse> :
         var response = await next();
         _timer.Stop();
 
+        // How long does it take to process a request?
         var elapsedMilliseconds = _timer.ElapsedMilliseconds;
 
         if (elapsedMilliseconds <= 500) return response;

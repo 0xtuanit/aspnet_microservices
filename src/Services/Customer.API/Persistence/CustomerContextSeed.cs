@@ -13,9 +13,9 @@ public static class CustomerContextSeed
             .GetRequiredService<CustomerContext>();
         customerContext.Database.MigrateAsync().GetAwaiter().GetResult();
 
-        CreateCustomer(customerContext, "customer1", "customer1", "customer", "customer1@gmail.com").GetAwaiter()
+        CreateCustomer(customerContext, "customer1", "first_name1", "last_name1", "customer1@gmail.com").GetAwaiter()
             .GetResult();
-        CreateCustomer(customerContext, "customer2", "customer2", "customer", "customer2@gmail.com").GetAwaiter()
+        CreateCustomer(customerContext, "customer2", "first_name2", "last_name2", "customer2@gmail.com").GetAwaiter()
             .GetResult();
 
         return host;
