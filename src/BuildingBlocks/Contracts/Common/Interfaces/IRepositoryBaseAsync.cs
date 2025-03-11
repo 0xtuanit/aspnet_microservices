@@ -5,7 +5,8 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Contracts.Common.Interfaces;
 
-public interface IRepositoryQueryBase<T, TK, TContext> where T : EntityBase<TK> where TContext : DbContext
+// For Query
+public interface IRepositoryQueryBase<T, TK> where T : EntityBase<TK>
 {
     IQueryable<T> FindAll(bool trackChanges = false);
 
@@ -21,8 +22,9 @@ public interface IRepositoryQueryBase<T, TK, TContext> where T : EntityBase<TK> 
     Task<T?> GetByIdAsync(TK id, params Expression<Func<T, object>>[] includeProperties);
 }
 
-public interface IRepositoryBaseAsync<T, TK, TContext> : IRepositoryQueryBase<T, TK, TContext> where T : EntityBase<TK>
-    where TContext : DbContext
+// For Command
+public interface IRepositoryBaseAsync<T, TK> : IRepositoryQueryBase<T, TK>
+    where T : EntityBase<TK>
 {
     Task<TK> CreateAsync(T entity);
 
@@ -43,4 +45,17 @@ public interface IRepositoryBaseAsync<T, TK, TContext> : IRepositoryQueryBase<T,
     Task EndTransactionAsync();
 
     Task RollbackTransactionAsync();
+}
+
+//-- Isolated these 2 ones with TContext so that we can work with MongoDB
+public interface IRepositoryQueryBase<T, TK, TContext> : IRepositoryQueryBase<T, TK>
+    where T : EntityBase<TK>
+    where TContext : DbContext
+{
+}
+
+public interface IRepositoryBaseAsync<T, TK, TContext> : IRepositoryBaseAsync<T, TK>
+    where T : EntityBase<TK>
+    where TContext : DbContext
+{
 }
