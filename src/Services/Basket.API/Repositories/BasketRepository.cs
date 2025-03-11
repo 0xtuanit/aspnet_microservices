@@ -19,30 +19,30 @@ namespace Basket.API.Repositories
             _logger = logger;
         }
 
-        public async Task<Cart?> GetBasketByUserName(string userName)
+        public async Task<Cart?> GetBasketByUsername(string username)
         {
-            _logger.Information($"BEGIN: GetBasketByUserName {userName}");
-            var basket = await _redisCacheService.GetStringAsync(userName);
-            _logger.Information($"END: GetBasketByUserName {userName}");
+            _logger.Information($"BEGIN: GetBasketByUserName {username}");
+            var basket = await _redisCacheService.GetStringAsync(username);
+            _logger.Information($"END: GetBasketByUserName {username}");
 
             return string.IsNullOrEmpty(basket) ? null : _serializeService.Deserialize<Cart>(basket);
         }
 
         public async Task<Cart?> UpdateBasket(Cart cart, DistributedCacheEntryOptions? options = null)
         {
-            _logger.Information($"BEGIN: UpdateBasket for {cart.UserName}");
+            _logger.Information($"BEGIN: UpdateBasket for {cart.Username}");
 
             if (options != null)
-                await _redisCacheService.SetStringAsync(cart.UserName, _serializeService.Serialize(cart), options);
+                await _redisCacheService.SetStringAsync(cart.Username, _serializeService.Serialize(cart), options);
             else
-                await _redisCacheService.SetStringAsync(cart.UserName, _serializeService.Serialize(cart));
+                await _redisCacheService.SetStringAsync(cart.Username, _serializeService.Serialize(cart));
 
-            _logger.Information($"END: UpdateBasket for {cart.UserName}");
+            _logger.Information($"END: UpdateBasket for {cart.Username}");
 
-            return await GetBasketByUserName(cart.UserName);
+            return await GetBasketByUsername(cart.Username);
         }
 
-        public async Task<bool> DeleteBasketFromUserName(string username)
+        public async Task<bool> DeleteBasketFromUsername(string username)
         {
             try
             {

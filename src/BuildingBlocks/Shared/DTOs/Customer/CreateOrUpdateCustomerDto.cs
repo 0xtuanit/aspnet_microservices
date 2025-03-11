@@ -4,7 +4,7 @@ namespace Shared.DTOs.Customer;
 
 public abstract class CreateOrUpdateCustomerDto
 {
-    [Required] public string UserName { get; set; }
+    [Required] public string Username { get; set; }
 
     [Required]
     [MaxLength(100, ErrorMessage = "Maximum length for Customer first name is 100 characters.")]

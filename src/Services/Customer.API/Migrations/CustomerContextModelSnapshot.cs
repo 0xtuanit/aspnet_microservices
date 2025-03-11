@@ -41,7 +41,7 @@ namespace Customer.API.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(150)");
 
-                    b.Property<string>("UserName")
+                    b.Property<string>("Username")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -50,7 +50,7 @@ namespace Customer.API.Migrations
                     b.HasIndex("EmailAddress")
                         .IsUnique();
 
-                    b.HasIndex("UserName")
+                    b.HasIndex("Username")
                         .IsUnique();
 
                     b.ToTable("Customers");

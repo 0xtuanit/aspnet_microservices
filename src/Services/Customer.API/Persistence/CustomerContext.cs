@@ -15,7 +15,7 @@ public class CustomerContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        modelBuilder.Entity<Entities.Customer>().HasIndex(x => x.UserName)
+        modelBuilder.Entity<Entities.Customer>().HasIndex(x => x.Username)
             .IsUnique();
         modelBuilder.Entity<Entities.Customer>().HasIndex(x => x.EmailAddress)
             .IsUnique();

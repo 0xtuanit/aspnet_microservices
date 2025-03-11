@@ -62,7 +62,7 @@ namespace Ordering.Infrastructure.Persistence.Migrations
                     b.Property<decimal>("TotalPrice")
                         .HasColumnType("decimal(10,2)");
 
-                    b.Property<string>("UserName")
+                    b.Property<string>("Username")
                         .IsRequired()
                         .HasColumnType("nvarchar(150)");
 

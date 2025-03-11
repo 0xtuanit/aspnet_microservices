@@ -17,7 +17,7 @@ namespace Customer.API.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    UserName = table.Column<string>(type: "text", nullable: false),
+                    Username = table.Column<string>(type: "text", nullable: false),
                     FirstName = table.Column<string>(type: "varchar(100)", nullable: false),
                     LastName = table.Column<string>(type: "varchar(150)", nullable: false),
                     EmailAddress = table.Column<string>(type: "text", nullable: false)
@@ -34,9 +34,9 @@ namespace Customer.API.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Customers_UserName",
+                name: "IX_Customers_Username",
                 table: "Customers",
-                column: "UserName",
+                column: "Username",
                 unique: true);
         }
 

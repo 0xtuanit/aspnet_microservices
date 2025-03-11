@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Customer.API.Migrations
 {
     [DbContext(typeof(CustomerContext))]
-    [Migration("20250122034655_Init_CustomerDB")]
+    [Migration("20250311150921_Init_CustomerDB")]
     partial class Init_CustomerDB
     {
         /// <inheritdoc />
@@ -44,7 +44,7 @@ namespace Customer.API.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(150)");
 
-                    b.Property<string>("UserName")
+                    b.Property<string>("Username")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -53,7 +53,7 @@ namespace Customer.API.Migrations
                     b.HasIndex("EmailAddress")
                         .IsUnique();
 
-                    b.HasIndex("UserName")
+                    b.HasIndex("Username")
                         .IsUnique();
 
                     b.ToTable("Customers");

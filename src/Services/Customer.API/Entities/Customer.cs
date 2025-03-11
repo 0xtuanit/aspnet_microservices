@@ -6,7 +6,7 @@ namespace Customer.API.Entities;
 
 public class Customer : EntityBase<int>
 {
-    [Required] public string UserName { get; set; }
+    [Required] public string Username { get; set; }
 
     [Required]
     [Column(TypeName = "varchar(100)")]

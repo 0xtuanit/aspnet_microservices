@@ -12,8 +12,8 @@ using Ordering.Infrastructure.Persistence;
 namespace Ordering.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(OrderContext))]
-    [Migration("20250311095045_Order_Add_Status")]
-    partial class Order_Add_Status
+    [Migration("20250311150356_Init_OrderDB")]
+    partial class Init_OrderDB
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -65,7 +65,7 @@ namespace Ordering.Infrastructure.Persistence.Migrations
                     b.Property<decimal>("TotalPrice")
                         .HasColumnType("decimal(10,2)");
 
-                    b.Property<string>("UserName")
+                    b.Property<string>("Username")
                         .IsRequired()
                         .HasColumnType("nvarchar(150)");
 

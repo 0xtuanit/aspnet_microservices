@@ -20,9 +20,9 @@ public class BasketsController : ControllerBase
 
     [HttpGet("{username}", Name = "GetBasket")]
     [ProducesResponseType(typeof(Cart), (int)HttpStatusCode.OK)]
-    public async Task<ActionResult<Cart>> GetBasketByUserName([Required] string username)
+    public async Task<ActionResult<Cart>> GetBasketByUsername([Required] string username)
     {
-        var result = await _repository.GetBasketByUserName(username);
+        var result = await _repository.GetBasketByUsername(username);
         return Ok(result ?? new Cart());
     }
 
@@ -41,7 +41,7 @@ public class BasketsController : ControllerBase
     [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
     public async Task<ActionResult<bool>> DeleteBasket([Required] string username)
     {
-        var result = await _repository.DeleteBasketFromUserName(username);
+        var result = await _repository.DeleteBasketFromUsername(username);
         return Ok(result);
     }
 }
