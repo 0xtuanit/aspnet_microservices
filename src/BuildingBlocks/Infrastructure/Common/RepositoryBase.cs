@@ -43,8 +43,8 @@ public class RepositoryBase<T, TK, TContext> : RepositoryQueryBase<T, TK, TConte
     public Task UpdateAsync(T entity)
     {
         if (_dbContext.Entry(entity).State == EntityState.Unchanged) return Task.CompletedTask;
-        T exist = _dbContext.Set<T>().Find(entity.Id);
-        _dbContext.Entry(exist).CurrentValues.SetValues(entity);
+        var exist = _dbContext.Set<T>().Find(entity.Id);
+        if (exist != null) _dbContext.Entry(exist).CurrentValues.SetValues(entity);
 
         return Task.CompletedTask;
     }

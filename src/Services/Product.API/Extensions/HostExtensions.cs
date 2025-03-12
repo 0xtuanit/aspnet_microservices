@@ -4,7 +4,7 @@ namespace Product.API.Extensions;
 
 public static class HostExtensions
 {
-    public static IHost MigrateDatabase<TContext>(this IHost host, Action<TContext, IServiceProvider> seeder)
+    public static IHost MigrateDatabase<TContext>(this IHost host, Action<TContext?, IServiceProvider> seeder)
         where TContext : DbContext
     {
         using (var scope = host.Services.CreateScope())
@@ -28,12 +28,12 @@ public static class HostExtensions
         return host;
     }
 
-    private static void ExecuteMigrations<TContext>(TContext context) where TContext : DbContext
+    private static void ExecuteMigrations<TContext>(TContext? context) where TContext : DbContext
     {
-        context.Database.Migrate();
+        context?.Database.Migrate();
     }
 
-    private static void InvokeSeeder<TContext>(Action<TContext, IServiceProvider> seeder, TContext context,
+    private static void InvokeSeeder<TContext>(Action<TContext?, IServiceProvider> seeder, TContext? context,
         IServiceProvider services) where TContext : DbContext
     {
         seeder(context, services);

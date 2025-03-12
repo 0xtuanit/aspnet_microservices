@@ -6,13 +6,13 @@ public class ApiResult<T>
     {
     }
 
-    public ApiResult(bool isSucceeded, string message = null)
+    public ApiResult(bool isSucceeded, string? message = null)
     {
         Message = message;
         IsSucceeded = isSucceeded;
     }
 
-    public ApiResult(bool isSucceeded, T data, string message = null)
+    public ApiResult(bool isSucceeded, T data, string? message = null)
     {
         Data = data;
         Message = message;
@@ -20,6 +20,6 @@ public class ApiResult<T>
     }
 
     public bool IsSucceeded { get; set; }
-    public string Message { get; set; }
+    public string? Message { get; set; }
     public T Data { get; }
 }

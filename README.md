@@ -31,13 +31,13 @@ docker-compose -f docker-compose.yml -f docker-compose.override.yml up -d --remo
 - Basket API: http://localhost:6004/api/baskets
 
 ## Docker Application URLs - LOCAL Environment (Docker Container):
-- Portainer: http://localhost:9000 - username: admin ; pass: admin1234
+- Portainer: http://localhost:9000 - username: admin ; pass: admin
 - Kibana: http://localhost:5601 - username: elastic ; pass: admin
-- RabbitMQ: http://localhost:15672 - username: guest ; pass: guest
+- RabbitMQ: http://localhost:15672 - username: thomas ; pass: Admin3000
 
 2. Using Visual Studio 2022
 - Open aspnetcore-microservices.sln - `aspnetcore-microservices.sln`
-- Run Compound to start multi projects
+- Run Compound to start multi-projects
 ---
 ## Application URLs - DEVELOPMENT Environment:
 - Product API: http://localhost:5002/api/products

@@ -17,10 +17,10 @@ namespace Customer.API.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Username = table.Column<string>(type: "text", nullable: false),
+                    Username = table.Column<string>(type: "varchar(150)", nullable: false),
                     FirstName = table.Column<string>(type: "varchar(100)", nullable: false),
                     LastName = table.Column<string>(type: "varchar(150)", nullable: false),
-                    EmailAddress = table.Column<string>(type: "text", nullable: false)
+                    EmailAddress = table.Column<string>(type: "varchar(250)", nullable: false)
                 },
                 constraints: table =>
                 {

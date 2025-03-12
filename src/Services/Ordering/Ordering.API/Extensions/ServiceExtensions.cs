@@ -10,7 +10,7 @@ public static class ServiceExtensions
         var emailSettings = configuration.GetSection(nameof(SMTPEmailSetting))
             .Get<SMTPEmailSetting>();
 
-        services.AddSingleton(emailSettings);
+        if (emailSettings != null) services.AddSingleton(emailSettings);
 
         return services;
     }

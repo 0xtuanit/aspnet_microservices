@@ -5,9 +5,9 @@ namespace Product.API.Persistence;
 
 public class ProductContextSeed
 {
-    public static async Task SeedProductAsync(ProductContext productContext, ILogger logger)
+    public static async Task SeedProductAsync(ProductContext? productContext, ILogger logger)
     {
-        if (!productContext.Products.Any())
+        if (productContext != null && !productContext.Products.Any())
         {
             productContext.AddRange(entities: getCatalogProducts());
             await productContext.SaveChangesAsync();
@@ -24,8 +24,8 @@ public class ProductContextSeed
             {
                 No = "Lotus",
                 Name = "Esprit",
-                Summary = "Nondisplaced fracture of greater trochanter of right femur",
-                Description = "Nondisplaced fracture of greater trochanter of right femur",
+                Summary = "Non-displaced fracture of greater trochanter of right femur",
+                Description = "Non-displaced fracture of greater trochanter of right femur",
                 Price = (decimal)177940.49
             },
             new()

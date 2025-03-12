@@ -21,7 +21,7 @@ services:
       - MYSQL_ROOT_PASSWORD=Admin3000
     restart: always
     volumes:
-      - mysql_data:/var/lib/mysql
+      - mysql_data:/bitnami/mysql/data
     ports:
       - "3306:3306"
 
@@ -36,14 +36,18 @@ services:
     ports:
       - "5433:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgresql_data:/bitnami/postgresql
 
   #basketdb: redis
   basketdb:
     container_name: basketdb
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
     restart: always
     ports:
       - "6379:6379"
+    volumes:
+      - redis_data:/bitnami/redis/data
 
   #inventorydb: mongo
   inventorydb:
@@ -52,16 +56,27 @@ services:
     ports:
       - "27017:27017"
     volumes:
-      - mongo_data:/data/db
+      - mongodb_data:/bitnami/mongodb
 
   #Infrastructure section
 
   rabbitmq:
     container_name: rabbitmq
+    environment:
+      - RABBITMQ_SECURE_PASSWORD=yes
+      - RABBITMQ_USERNAME=thomas
+      - RABBITMQ_PASSWORD=Admin3000
+      - RABBITMQ_LOGS=-
     restart: always
     ports:
+      - "4369:4369"
+      - "5551:5551"
+      - "5552:5552"
       - "5672:5672"
+      - "25672:25672"
       - "15672:15672"
+    volumes:
+      - rabbitmq_data:/bitnami/rabbitmq/mnesia
   
   pgadmin:
     container_name: pgadmin
@@ -93,8 +108,9 @@ services:
       - discovery.type=single-node
     ports:
       - "9200:9200"
+      - "9300:9300"
     volumes:
-      - elasticsearch_data:/usr/share/elasticsearch/data
+      - elasticsearch_data:/bitnami/elasticsearch/data
   
   kibana:
     container_name: kibana
@@ -140,4 +156,16 @@ services:
       - basketdb
     ports:
       - "6004:80"
+    restart: always
+  
+  ordering.api:
+    container_name: ordering.api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - "ConnectionStrings:DefaultConnectionString=Server=orderdb;Database=OrderDb;User Id=sa;Password=Admin3000;Encrypt=false;MultipleActiveResultSets=true;"
+    depends_on:
+      - orderdb
+    ports:
+      - "6005:80"
     restart: always

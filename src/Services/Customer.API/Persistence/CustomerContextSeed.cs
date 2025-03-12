@@ -24,8 +24,9 @@ public static class CustomerContextSeed
     private static async Task CreateCustomer(CustomerContext customerContext, string username, string firstName,
         string lastName, string email)
     {
-        var customer = await customerContext.Customers.SingleOrDefaultAsync(x => x.Username.Equals(username)
-            || x.EmailAddress.Equals(email));
+        var customer = await customerContext.Customers.SingleOrDefaultAsync(x =>
+            (x.Username != null && x.Username.Equals(username)) ||
+            (x.EmailAddress != null && x.EmailAddress.Equals(email)));
         if (customer == null)
         {
             var newCustomer = new Entities.Customer

@@ -24,7 +24,7 @@ public class Order : EntityAuditBase<long>
 
     [Required]
     [EmailAddress]
-    [Column(TypeName = "nvarchar(250)")]
+    [Column(TypeName = "varchar(250)")]
     public string? EmailAddress { get; set; }
 
     [Column(TypeName = "nvarchar(max)")]

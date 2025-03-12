@@ -21,7 +21,7 @@ namespace Ordering.Infrastructure.Persistence.Migrations
                     TotalPrice = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
                     FirstName = table.Column<string>(type: "nvarchar(50)", nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(250)", nullable: false),
-                    EmailAddress = table.Column<string>(type: "nvarchar(250)", nullable: false),
+                    EmailAddress = table.Column<string>(type: "varchar(250)", nullable: false),
                     ShippingAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     InvoiceAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Status = table.Column<int>(type: "int", nullable: false, defaultValue: 1),

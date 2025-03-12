@@ -4,32 +4,32 @@ services:
     image: mcr.microsoft.com/mssql/server:2022-latest
 
   productdb:
-    image: bitnami/mysql:8.4.3
+    image: bitnami/mysql:8.4.4
 
   customerdb:
-    image: postgres:alpine3.21
+    image: bitnami/postgresql:17.4.0
 
   basketdb:
-    image: redis:7.2.7-alpine3.21
+    image: bitnami/redis:7.4.2
 
   inventorydb:
-    image: mongo
+    image: bitnami/mongodb:8.0.5
 
   #Infrastructure section
   rabbitmq:
-    image: bitnami/rabbitmq:4.0.5
+    image: bitnami/rabbitmq:4.0.7
 
   pgadmin:
-    image: dpage/pgadmin4
+    image: dpage/pgadmin4:9.1.0
 
   portainer:
-    image: portainer/portainer-ce
+    image: portainer/portainer-ce:2.27.1
 
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.26
+    image: bitnami/elasticsearch:8.17.3
 
   kibana:
-    image: docker.elastic.co/kibana/kibana:7.17.26
+    image: bitnami/kibana:8.17.3
   
   #microservices api section
   product.api:
@@ -49,6 +49,12 @@ services:
     build:
       context: .
       dockerfile: Services/Basket.API/Dockerfile
+
+  ordering.api:
+    image: ${DOCKER_REGISTRY-}ordering-api:${PLATFORM:-linux}-${TAG:-latest}
+    build:
+      context: .
+      dockerfile: Services/Ordering/Ordering.API/Dockerfile
   
 #Network section
 networks:
@@ -62,15 +68,19 @@ volumes:
     name: sqlserver_data
   mysql_data:
     name: mysql_data
-  postgres_data:
-    name: postgres_data
+  postgresql_data:
+    name: postgresql_data
+  redis_data:
+    name: redis_data
+  rabbitmq_data:
+    name: rabbitmq_data
   portainer_data:
     name: portainer_data
   elasticsearch_data:
     name: elasticsearch_data
   jaeger_data:
     name: jaeger_data
-  mongo_data:
-    name: mongo_data
+  mongodb_data:
+    name: mongodb_data
   pgadmin_data:
     name: pgadmin_data

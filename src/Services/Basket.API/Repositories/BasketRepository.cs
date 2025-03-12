@@ -30,6 +30,8 @@ namespace Basket.API.Repositories
 
         public async Task<Cart?> UpdateBasket(Cart cart, DistributedCacheEntryOptions? options = null)
         {
+            if (cart.Username == null) return null;
+
             _logger.Information($"BEGIN: UpdateBasket for {cart.Username}");
 
             if (options != null)

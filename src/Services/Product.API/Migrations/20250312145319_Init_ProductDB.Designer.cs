@@ -12,7 +12,7 @@ using Product.API.Persistence;
 namespace Product.API.Migrations
 {
     [DbContext(typeof(ProductContext))]
-    [Migration("20250112133656_Init_ProductDB")]
+    [Migration("20250312145319_Init_ProductDB")]
     partial class Init_ProductDB
     {
         /// <inheritdoc />
@@ -20,7 +20,7 @@ namespace Product.API.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.0")
+                .HasAnnotation("ProductVersion", "9.0.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
@@ -37,7 +37,6 @@ namespace Product.API.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTimeOffset?>("LastModifiedDate")
@@ -55,7 +54,6 @@ namespace Product.API.Migrations
                         .HasColumnType("decimal(12,2)");
 
                     b.Property<string>("Summary")
-                        .IsRequired()
                         .HasColumnType("nvarchar(255)");
 
                     b.HasKey("Id");
