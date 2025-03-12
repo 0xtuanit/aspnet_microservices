@@ -13,6 +13,18 @@ public class OrderRepository : RepositoryBase<Order, long, OrderContext>, IOrder
     {
     }
 
+    public async Task<Order?> GetOrder(long id) => await GetByIdAsync(id);
+
     public async Task<IEnumerable<Order>> GetOrdersByUsername(string username) =>
         await FindByCondition(o => o.Username != null && o.Username.Equals(username)).ToListAsync();
+
+    public Task CreateOrder(Order order) => CreateAsync(order);
+
+    public Task UpdateOrder(Order order) => UpdateAsync(order);
+
+    public async Task DeleteOrder(long id)
+    {
+        var order = await GetOrder(id);
+        if (order is not null) _ = DeleteAsync(order);
+    }
 }

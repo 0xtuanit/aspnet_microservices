@@ -11,7 +11,8 @@ public class Order : EntityAuditBase<long>
     [Column(TypeName = "nvarchar(150)")]
     public string? Username { get; set; }
 
-    [Column(TypeName = "decimal(10,2)")] public decimal TotalPrice { get; set; }
+    [Column(TypeName = "decimal(10,2)")]
+    public decimal TotalPrice { get; set; }
 
     [Required]
     [Column(TypeName = "nvarchar(50)")]
@@ -26,9 +27,11 @@ public class Order : EntityAuditBase<long>
     [Column(TypeName = "nvarchar(250)")]
     public string? EmailAddress { get; set; }
 
-    [Column(TypeName = "nvarchar(max)")] public string? ShippingAddress { get; set; }
+    [Column(TypeName = "nvarchar(max)")]
+    public string? ShippingAddress { get; set; }
 
-    [Column(TypeName = "nvarchar(max)")] public string? InvoiceAddress { get; set; }
+    [Column(TypeName = "nvarchar(max)")]
+    public string? InvoiceAddress { get; set; }
 
     public EOrderStatus? Status { get; set; }
 }
