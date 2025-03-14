@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 using Ordering.Application.Common.Interfaces;
 using Ordering.Application.Common.Models;
 using Ordering.Application.Features.V1.Orders;
-using Ordering.Domain.Entities;
 using Shared.SeedWork;
 
 namespace Ordering.API.Controllers;
@@ -17,18 +16,12 @@ namespace Ordering.API.Controllers;
 public class OrdersController : ControllerBase
 {
     private readonly IMediator _mediator;
-    private readonly IMessageProducer _messageProducer;
-    private readonly IOrderRepository _orderRepository;
-    private readonly IMapper _mapper;
     // private readonly ISmtpEmailService _emailService;
 
     public OrdersController(IMediator mediator, IMessageProducer messageProducer,
         IOrderRepository orderRepository, IMapper mapper)
     {
         _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
-        _messageProducer = messageProducer ?? throw new ArgumentNullException(nameof(messageProducer));
-        _orderRepository = orderRepository ?? throw new ArgumentNullException(nameof(orderRepository));
-        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         // _emailService = emailService;
     }
 
@@ -49,13 +42,13 @@ public class OrdersController : ControllerBase
         return Ok(result);
     }
 
-    // [HttpPost(Name = RouteNames.CreateOrder)]
-    // [ProducesResponseType(typeof(ApiResult<long>), (int)HttpStatusCode.OK)]
-    // public async Task<ActionResult<ApiResult<long>>> CreateOrder([FromBody] CreateOrderCommand command)
-    // {
-    //     var result = await _mediator.Send(command);
-    //     return Ok(result);
-    // }
+    [HttpPost(Name = RouteNames.CreateOrder)]
+    [ProducesResponseType(typeof(ApiResult<long>), (int)HttpStatusCode.OK)]
+    public async Task<ActionResult<ApiResult<long>>> CreateOrder([FromBody] CreateOrderCommand command)
+    {
+        var result = await _mediator.Send(command);
+        return Ok(result);
+    }
 
     [HttpPut("{id:long}", Name = RouteNames.UpdateOrder)]
     [ProducesResponseType(typeof(ApiResult<OrderDto>), (int)HttpStatusCode.OK)]
@@ -74,21 +67,6 @@ public class OrdersController : ControllerBase
         var command = new DeleteOrderCommand(id);
         await _mediator.Send(command);
         return NoContent();
-    }
-
-    /** RabbitMQ APIs **/
-    [HttpPost]
-    public async Task<IActionResult> CreateOrder2(OrderDto orderDto)
-    {
-        var order = _mapper.Map<Order>(orderDto);
-        var addedOrder = await _orderRepository.CreateOrder2(order);
-
-        await _orderRepository.SaveChangesAsync();
-        var result = _mapper.Map<OrderDto>(addedOrder);
-
-        await _messageProducer.SendMessage(result); // Publish addedOrder message to RabbitMQ, then consume it
-
-        return Ok(result);
     }
 
     // [HttpGet("test-email")]

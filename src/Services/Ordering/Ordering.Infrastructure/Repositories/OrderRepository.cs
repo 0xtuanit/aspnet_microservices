@@ -20,12 +20,6 @@ public class OrderRepository : RepositoryBase<Order, long, OrderContext>, IOrder
 
     public async Task CreateOrder(Order order) => await CreateAsync(order);
 
-    public async Task<Order> CreateOrder2(Order order)
-    {
-        await CreateAsync(order);
-        return order;
-    }
-
     public Task UpdateOrder(Order order) => UpdateAsync(order);
 
     public async Task DeleteOrder(long id)
