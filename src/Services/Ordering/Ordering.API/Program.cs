@@ -23,8 +23,10 @@ try
     builder.Services.AddConfigurationSettings(builder.Configuration);
     builder.Services.AddApplicationServices();
     builder.Services.AddInfrastructureServices(builder.Configuration);
-    builder.Services.AddScoped<IMessageProducer, RabbitMQProducer>();
-    builder.Services.AddScoped<ISerializeService, SerializeService>();
+    builder.Services.ConfigureMassTransit();
+
+    // builder.Services.AddScoped<IMessageProducer, RabbitMQProducer>();
+    // builder.Services.AddScoped<ISerializeService, SerializeService>();
 
     builder.Services.AddControllers();
 

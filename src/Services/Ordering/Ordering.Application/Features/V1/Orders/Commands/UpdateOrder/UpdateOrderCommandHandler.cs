@@ -1,7 +1,9 @@
 using AutoMapper;
 using MediatR;
+using Ordering.Application.Common.Exceptions;
 using Ordering.Application.Common.Interfaces;
 using Ordering.Application.Common.Models;
+using Ordering.Domain.Entities;
 using Shared.SeedWork;
 using ILogger = Serilog.ILogger;
 
@@ -24,20 +26,19 @@ public class UpdateOrderCommandHandler : IRequestHandler<UpdateOrderCommand, Api
 
     public async Task<ApiResult<OrderDto>> Handle(UpdateOrderCommand command, CancellationToken cancellationToken)
     {
-        _logger.Information($"BEGIN: {MethodName}");
+        var orderEntity = await _repository.GetByIdAsync(command.Id);
+        if (orderEntity is null) throw new NotFoundException(nameof(Order), command.Id);
 
-        var oldOrder = await _repository.GetOrder(command.Id);
-        if (oldOrder == null)
-            return new ApiErrorResult<OrderDto>("Order not found with the provided id.");
+        _logger.Information($"BEGIN: {MethodName} - Order: {command.Id}");
 
-        var updatedOrder = _mapper.Map(command, oldOrder);
+        orderEntity = _mapper.Map(command, orderEntity);
+        var updatedOrder = await _repository.UpdateOrderAsync(orderEntity);
+        _repository.SaveChangesAsync();
 
-        await _repository.UpdateOrder(updatedOrder);
-        await _repository.SaveChangesAsync();
-
+        _logger.Information($"Order {command.Id} was successfully updated.");
         var result = _mapper.Map<OrderDto>(updatedOrder);
 
-        _logger.Information($"END: {MethodName}");
+        _logger.Information($"END: {MethodName} - Order: {command.Id}");
 
         return new ApiSuccessResult<OrderDto>(result);
     }

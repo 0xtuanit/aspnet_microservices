@@ -1,19 +1,18 @@
-using AutoMapper;
 using MediatR;
+using Ordering.Application.Common.Exceptions;
 using Ordering.Application.Common.Interfaces;
+using Ordering.Domain.Entities;
 using ILogger = Serilog.ILogger;
 
 namespace Ordering.Application.Features.V1.Orders;
 
 public class DeleteOrderCommandHandler : IRequestHandler<DeleteOrderCommand>
 {
-    private readonly IMapper _mapper;
     private readonly IOrderRepository _repository;
     private readonly ILogger _logger;
 
-    public DeleteOrderCommandHandler(IMapper mapper, IOrderRepository repository, ILogger logger)
+    public DeleteOrderCommandHandler(IOrderRepository repository, ILogger logger)
     {
-        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
@@ -22,11 +21,12 @@ public class DeleteOrderCommandHandler : IRequestHandler<DeleteOrderCommand>
 
     public async Task Handle(DeleteOrderCommand command, CancellationToken cancellationToken)
     {
-        _logger.Information($"BEGIN: {MethodName}");
+        var orderEntity = await _repository.GetByIdAsync(command.Id);
+        if (orderEntity == null) throw new NotFoundException(nameof(Order), command.Id);
 
-        await _repository.DeleteOrder(command.Id);
-        await _repository.SaveChangesAsync();
+        _repository.DeleteAsync(orderEntity);
+        _repository.SaveChangesAsync();
 
-        _logger.Information($"END: {MethodName}");
+        _logger.Information($"Order {orderEntity.Id} was successfully deleted.");
     }
 }

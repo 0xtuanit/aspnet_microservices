@@ -1,22 +1,30 @@
 using AutoMapper;
+using Contracts.Services;
 using MediatR;
 using Ordering.Application.Common.Interfaces;
 using Ordering.Domain.Entities;
 using Shared.SeedWork;
+using Shared.Services.Email;
 using ILogger = Serilog.ILogger;
 
 namespace Ordering.Application.Features.V1.Orders;
 
 public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, ApiResult<long>>
 {
+    private readonly IOrderRepository _orderRepository;
     private readonly IMapper _mapper;
-    private readonly IOrderRepository _repository;
+    private readonly ISmtpEmailService _emailService;
     private readonly ILogger _logger;
 
-    public CreateOrderCommandHandler(IMapper mapper, IOrderRepository repository, ILogger logger)
+    public CreateOrderCommandHandler(
+        IOrderRepository orderRepository,
+        IMapper mapper,
+        ISmtpEmailService emailService,
+        ILogger logger)
     {
+        _orderRepository = orderRepository ?? throw new ArgumentNullException(nameof(orderRepository));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-        _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+        _emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
@@ -24,15 +32,38 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Api
 
     public async Task<ApiResult<long>> Handle(CreateOrderCommand command, CancellationToken cancellationToken)
     {
-        _logger.Information($"BEGIN: {MethodName}");
+        _logger.Information($"BEGIN: {MethodName} - Username: {command.Username}");
 
-        var order = _mapper.Map<Order>(command);
+        var orderEntity = _mapper.Map<Order>(command);
+        // var addedOrder = await _orderRepository.CreateOrderAsync(orderEntity);
+        await _orderRepository.CreateAsync(orderEntity);
+        await _orderRepository.SaveChangesAsync();
 
-        await _repository.CreateOrder(order);
-        await _repository.SaveChangesAsync();
+        _logger.Information($"END: {orderEntity.Id} is successfully created.");
 
-        _logger.Information($"END: {MethodName}");
+        // SendEmailAsync(addedOrder, cancellationToken);
 
-        return new ApiSuccessResult<long>(order.Id);
+        _logger.Information($"END: {MethodName} - Username: {command.Username}");
+        return new ApiSuccessResult<long>(orderEntity.Id);
+    }
+
+    private async Task SendEmailAsync(Order order, CancellationToken cancellationToken)
+    {
+        var emailRequest = new MailRequest
+        {
+            ToAddress = order.EmailAddress,
+            Body = "Order was created.",
+            Subject = "Order was created"
+        };
+
+        try
+        {
+            await _emailService.SendEmailAsync(emailRequest, cancellationToken);
+            _logger.Information($"Sent Created Order to email {order.EmailAddress}");
+        }
+        catch (Exception ex)
+        {
+            _logger.Error($"Order {order.Id} failed due to an error with the email service: {ex.Message}");
+        }
     }
 }
