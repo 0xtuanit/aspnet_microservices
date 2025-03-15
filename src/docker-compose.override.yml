@@ -69,12 +69,8 @@ services:
       - RABBITMQ_LOGS=-
     restart: always
     ports:
-      - "4369:4369"
-      - "5551:5551"
-      - "5552:5552"
-      - "5672:5672"
-      - "25672:25672"
       - "15672:15672"
+      - "5672:5672"
     volumes:
       - rabbitmq_data:/bitnami/rabbitmq/mnesia
   
@@ -152,8 +148,10 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:80
       - "CacheSettings:ConnectionString=basketdb:6379"
+      - "EventBusSettings:HostAddress=amqp://thomas:Admin3000@rabbitmq:5672"
     depends_on:
       - basketdb
+      - rabbitmq
     ports:
       - "6004:80"
     restart: always
@@ -164,8 +162,10 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:80
       - "ConnectionStrings:DefaultConnectionString=Server=orderdb;Database=OrderDb;User Id=sa;Password=Admin3000;Encrypt=false;MultipleActiveResultSets=true;"
+      - "EventBusSettings:HostAddress=amqp://thomas:Admin3000@rabbitmq:5672"
     depends_on:
       - orderdb
+      - rabbitmq
     ports:
       - "6005:80"
     restart: always

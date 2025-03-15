@@ -44,8 +44,6 @@ try
 
     // Map URL following minimal API style
     app.MapGet("/", () => $"Welcome to {builder.Environment.ApplicationName}!");
-    // app.MapGet("/api/customers",
-    //     async (ICustomerService customerService) => await customerService.GetCustomersAsync());
 
     app.MapCustomersApi();
 

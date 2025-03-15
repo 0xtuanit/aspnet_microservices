@@ -17,7 +17,7 @@ public class UpdateOrderCommand : CreateOrUpdateCommand, IRequest<ApiResult<Orde
         Id = id;
     }
 
-    public void Mapping(Profile profile)
+    public new void Mapping(Profile profile)
     {
         profile.CreateMap<UpdateOrderCommand, Order>()
             .ForMember(

@@ -11,7 +11,7 @@ public class CreateOrderCommand : CreateOrUpdateCommand, IRequest<ApiResult<long
 {
     public string? Username { get; set; }
 
-    public void Mapping(Profile profile)
+    public new void Mapping(Profile profile)
     {
         profile.CreateMap<CreateOrderCommand, Order>();
         profile.CreateMap<BasketCheckoutEvent, CreateOrderCommand>();

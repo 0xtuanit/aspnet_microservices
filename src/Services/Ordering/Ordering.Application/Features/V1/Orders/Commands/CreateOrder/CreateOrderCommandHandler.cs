@@ -36,6 +36,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Api
 
         var orderEntity = _mapper.Map<Order>(command);
         // var addedOrder = await _orderRepository.CreateOrderAsync(orderEntity);
+
         await _orderRepository.CreateAsync(orderEntity);
         await _orderRepository.SaveChangesAsync();
 

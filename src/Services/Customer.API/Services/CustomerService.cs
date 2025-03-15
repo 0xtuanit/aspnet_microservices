@@ -29,5 +29,5 @@ public class CustomerService : ICustomerService
         return Results.Ok(result);
     }
 
-    // public async Task<IResult> GetCustomersAsync() => Results.Ok(await _repository.GetCustomersAsync());
+    public async Task<IResult> GetCustomers() => Results.Ok(await _repository.GetCustomersAsync());
 }
