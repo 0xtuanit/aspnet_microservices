@@ -1,4 +1,6 @@
 using System.Reflection;
+using Contracts.Common.Events;
+using Contracts.Common.Interfaces;
 using Contracts.Domains.Interfaces;
 using Infrastructure.Extensions;
 using MediatR;
@@ -20,6 +22,21 @@ public class OrderContext : DbContext
     }
 
     public DbSet<Order> Orders { get; set; }
+    private List<BaseEvent> _baseEvents;
+
+    private void SetBaseEventBeforeSaveChanges()
+    {
+        var domainEntities = ChangeTracker.Entries<IEventEntity>()
+            .Select(x => x.Entity)
+            .Where(x => x.DomainEvents().Any())
+            .ToList();
+
+        _baseEvents = domainEntities
+            .SelectMany(x => x.DomainEvents())
+            .ToList();
+
+        domainEntities.ForEach(x => x.ClearDomainEvents()); // It'll publish continuous events if we clear it
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -30,6 +47,7 @@ public class OrderContext : DbContext
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
     {
+        SetBaseEventBeforeSaveChanges();
         var modified = ChangeTracker.Entries()
             .Where(e => e.State == EntityState.Modified ||
                         e.State == EntityState.Added ||
@@ -59,7 +77,7 @@ public class OrderContext : DbContext
         }
 
         var result = base.SaveChangesAsync(cancellationToken);
-        _mediator.DispatchDomainEventAsync(this, _logger);
+        _mediator.DispatchDomainEventAsync(_baseEvents, _logger);
 
         return result;
     }
