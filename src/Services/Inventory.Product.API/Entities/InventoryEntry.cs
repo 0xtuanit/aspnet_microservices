@@ -1,10 +1,12 @@
 using Inventory.Product.API.Entities.Abstraction;
+using Inventory.Product.API.Extensions;
 using MongoDB.Bson.Serialization.Attributes;
 using Shared.Enums.Inventory;
  
 namespace Inventory.Product.API.Entities;
  
 // Store every transaction for delivering and receiving of product
+[BsonCollection("InventoryEntries")]
 public class InventoryEntry : MongoEntity
 {
     public InventoryEntry()
