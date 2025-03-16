@@ -12,7 +12,7 @@ public class ApiResult<T>
         IsSucceeded = isSucceeded;
     }
 
-    public ApiResult(bool isSucceeded, T data, string? message = null)
+    protected ApiResult(bool isSucceeded, T? data, string? message = null)
     {
         Data = data;
         Message = message;
@@ -21,5 +21,5 @@ public class ApiResult<T>
 
     public bool IsSucceeded { get; set; }
     public string? Message { get; set; }
-    public T Data { get; }
+    public T? Data { get; }
 }

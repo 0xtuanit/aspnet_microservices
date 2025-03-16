@@ -2,5 +2,6 @@ namespace Shared.Configurations;
 
 public class DatabaseSettings
 {
-    public string ConnectionString { get; set; }
+    public string? DBProvider { get; set; }
+    public string? ConnectionString { get; set; }
 }

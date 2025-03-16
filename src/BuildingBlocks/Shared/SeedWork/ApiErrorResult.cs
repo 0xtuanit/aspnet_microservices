@@ -15,5 +15,5 @@ public class ApiErrorResult<T> : ApiResult<T>
         Errors = errors;
     }
 
-    public List<string> Errors { get; set; }
+    public List<string>? Errors { get; set; }
 }

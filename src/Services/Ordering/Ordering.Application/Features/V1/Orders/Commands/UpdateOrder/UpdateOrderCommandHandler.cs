@@ -24,7 +24,7 @@ public class UpdateOrderCommandHandler : IRequestHandler<UpdateOrderCommand, Api
 
     private const string MethodName = "UpdateOrderCommandHandler";
 
-    public async Task<ApiResult<OrderDto>> Handle(UpdateOrderCommand command, CancellationToken cancellationToken)
+    public async Task<ApiResult<OrderDto?>> Handle(UpdateOrderCommand command, CancellationToken cancellationToken)
     {
         var orderEntity = await _repository.GetByIdAsync(command.Id);
         if (orderEntity is null) throw new NotFoundException(nameof(Order), command.Id);
@@ -40,6 +40,6 @@ public class UpdateOrderCommandHandler : IRequestHandler<UpdateOrderCommand, Api
 
         _logger.Information($"END: {MethodName} - Order: {command.Id}");
 
-        return new ApiSuccessResult<OrderDto>(result);
+        return new ApiSuccessResult<OrderDto?>(result);
     }
 }

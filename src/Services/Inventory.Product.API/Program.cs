@@ -1,30 +1,25 @@
 using Common.Logging;
+using Inventory.Product.API.Extensions;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog(Serilogger.Configure);
 
 // Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateBootstrapLogger();
-Log.Information("Starting Inventory API up");
+Log.Information($"Start {builder.Environment.ApplicationName} up");
 
 try
 {
-    // var builder = WebApplication.CreateBuilder(args);
-
-    builder.Host.UseSerilog(configureLogger: (ctx, lc) => lc
-        .WriteTo.Console(
-            outputTemplate:
-            "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}")
-        .Enrich.FromLogContext()
-        .ReadFrom.Configuration(ctx.Configuration));
-
     // Add services to the container.
-
+    builder.Services.AddConfigurationSettings(builder.Configuration);
     builder.Services.AddControllers();
 
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
+    builder.Services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
+    builder.Services.AddInfrastructureServices();
+    builder.Services.ConfigureMongoDbClient();
 
     var app = builder.Build();
 
@@ -35,20 +30,23 @@ try
         app.UseSwaggerUI();
     }
 
-    app.UseHttpsRedirection();
+    // app.UseHttpsRedirection();
 
     app.UseAuthorization();
 
-    app.MapControllers();
+    app.MapDefaultControllerRoute(); // Automatically adding Home index into Url
 
-    app.Run();
+    app.MigrateDatabase().Run();
 }
 catch (Exception ex)
 {
-    Log.Fatal(ex, "Unhandled exception");
+    string type = ex.GetType().Name;
+    if (type.Equals("StopTheHostException", StringComparison.Ordinal)) throw;
+
+    Log.Fatal(ex, $"Unhandled exception: {ex.Message}");
 }
 finally
 {
-    Log.Information("Shut down Inventory API complete");
+    Log.Information($"Shut down {builder.Environment.ApplicationName} complete");
     Log.CloseAndFlush();
 }
