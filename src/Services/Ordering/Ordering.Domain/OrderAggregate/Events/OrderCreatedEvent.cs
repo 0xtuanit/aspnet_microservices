@@ -11,9 +11,10 @@ public class OrderCreatedEvent : BaseEvent
     public decimal TotalPrice { get; private set; }
     public string? ShippingAddress { get; private set; }
     public string? InvoiceAddress { get; private set; }
+    public string? FullName { get; set; }
 
     public OrderCreatedEvent(long id, string? username, string? documentNo, string? emailAddress, decimal totalPrice,
-        string? shippingAddress, string? invoiceAddress)
+        string? shippingAddress, string? invoiceAddress, string? fullName)
     {
         Id = id;
         Username = username;
@@ -22,5 +23,6 @@ public class OrderCreatedEvent : BaseEvent
         TotalPrice = totalPrice;
         ShippingAddress = shippingAddress;
         InvoiceAddress = invoiceAddress;
+        FullName = fullName;
     }
 }

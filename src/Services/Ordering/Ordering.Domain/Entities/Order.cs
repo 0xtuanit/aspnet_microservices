@@ -15,35 +15,38 @@ public class Order : AuditableEventEntity<long>
     
     // Temporary solution for automatically inserting Document number
     public Guid DocumentNo { get; set; } = Guid.NewGuid();
-
-    [Column(TypeName = "decimal(10,2)")]
-    public decimal TotalPrice { get; set; }
-
+    
     [Required]
     [Column(TypeName = "nvarchar(50)")]
     public string? FirstName { get; set; }
-
+    
     [Required]
     [Column(TypeName = "nvarchar(250)")]
     public string? LastName { get; set; }
-
+    
+    [Column(TypeName = "decimal(10,2)")]
+    public decimal TotalPrice { get; set; }
+    
     [Required]
     [EmailAddress]
     [Column(TypeName = "varchar(250)")]
     public string? EmailAddress { get; set; }
-
+    
     [Column(TypeName = "nvarchar(max)")]
     public string? ShippingAddress { get; set; }
-
+    
     [Column(TypeName = "nvarchar(max)")]
     public string? InvoiceAddress { get; set; }
-
+    
     public EOrderStatus? Status { get; set; }
-
+    
+    [NotMapped]
+    public string FullName => FirstName + " " + LastName;
+    
     public Order AddedOrder()
     {
-        AddDomainEvent(new OrderCreatedEvent(Id, Username, DocumentNo.ToString(), EmailAddress, TotalPrice,
-            ShippingAddress, InvoiceAddress));
+        AddDomainEvent(new OrderCreatedEvent(Id, Username, DocumentNo.ToString(), EmailAddress,
+            TotalPrice, ShippingAddress, InvoiceAddress, FullName));
         return this;
     }
 
