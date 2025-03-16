@@ -1,15 +1,20 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Contracts.Domains;
+using Contracts.Common.Events;
 using Ordering.Domain.Enums;
+using Ordering.Domain.OrderAggregate.Events;
 
 namespace Ordering.Domain.Entities;
 
-public class Order : EntityAuditBase<long>
+// Inherited from AuditableEventEntity to apply DDD to this Order service
+public class Order : AuditableEventEntity<long>
 {
     [Required]
     [Column(TypeName = "nvarchar(150)")]
     public string? Username { get; set; }
+    
+    // Temporary solution for automatically inserting Document number
+    public Guid DocumentNo { get; set; } = Guid.NewGuid();
 
     [Column(TypeName = "decimal(10,2)")]
     public decimal TotalPrice { get; set; }
@@ -34,4 +39,17 @@ public class Order : EntityAuditBase<long>
     public string? InvoiceAddress { get; set; }
 
     public EOrderStatus? Status { get; set; }
+
+    public Order AddedOrder()
+    {
+        AddDomainEvent(new OrderCreatedEvent(Id, Username, DocumentNo.ToString(), EmailAddress, TotalPrice,
+            ShippingAddress, InvoiceAddress));
+        return this;
+    }
+
+    public Order DeletedOrder()
+    {
+        AddDomainEvent(new OrderDeletedEvent(Id));
+        return this;
+    }
 }

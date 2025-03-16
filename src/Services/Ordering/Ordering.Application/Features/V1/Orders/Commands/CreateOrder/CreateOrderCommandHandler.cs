@@ -37,10 +37,11 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Api
         var orderEntity = _mapper.Map<Order>(command);
         // var addedOrder = await _orderRepository.CreateOrderAsync(orderEntity);
 
-        await _orderRepository.CreateAsync(orderEntity);
-        await _orderRepository.SaveChangesAsync();
+        _orderRepository.CreateOrder(orderEntity);
+        orderEntity.AddedOrder();
+        await _orderRepository.SaveChangesAsync(); // want to publish entity that's developed with BaseEvent atm
 
-        _logger.Information($"END: {orderEntity.Id} is successfully created.");
+        _logger.Information($"Order: {orderEntity.Id} - Document No: {orderEntity.DocumentNo} was successfully created.");
 
         // SendEmailAsync(addedOrder, cancellationToken);
 

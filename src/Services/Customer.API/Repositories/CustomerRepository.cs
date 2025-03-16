@@ -1,6 +1,6 @@
 using Customer.API.Persistence;
 using Customer.API.Repositories.Interfaces;
-using Infrastructure.Common;
+using Infrastructure.Common.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace Customer.API.Repositories;

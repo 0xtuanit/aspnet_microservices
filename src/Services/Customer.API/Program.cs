@@ -1,5 +1,5 @@
 using Common.Logging;
-using Contracts.Common.Interfaces;
+using Contracts.Domains.Interfaces;
 using Customer.API;
 using Customer.API.Controllers;
 using Customer.API.Persistence;
@@ -7,7 +7,7 @@ using Customer.API.Repositories;
 using Customer.API.Repositories.Interfaces;
 using Customer.API.Services;
 using Customer.API.Services.Interfaces;
-using Infrastructure.Common;
+using Infrastructure.Common.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 

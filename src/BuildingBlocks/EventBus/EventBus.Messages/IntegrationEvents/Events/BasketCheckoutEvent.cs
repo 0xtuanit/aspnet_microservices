@@ -2,7 +2,9 @@ using EventBus.Messages.IntegrationEvents.Interfaces;
 
 namespace EventBus.Messages.IntegrationEvents.Events;
 
-public record BasketCheckoutEvent() : IntegrationBaseEvent, IBasketCheckoutEvent
+// Only place here all Events relevant to Mass Transit(communicating between microservices)
+// => we isolated them with Contracts
+public record BasketCheckoutEvent : IntegrationBaseEvent, IBasketCheckoutEvent
 {
     public string? Username { get; set; }
     public decimal TotalPrice { get; set; }

@@ -1,5 +1,5 @@
-using Contracts.Common.Interfaces;
-using Infrastructure.Common;
+using Contracts.Domains.Interfaces;
+using Infrastructure.Common.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Ordering.Application.Common.Interfaces;
 using Ordering.Domain.Entities;
@@ -17,11 +17,7 @@ public class OrderRepository : RepositoryBase<Order, long, OrderContext>, IOrder
         await FindByCondition(o => o.Username != null && o.Username.Equals(username))
             .ToListAsync();
 
-    public async Task<Order> CreateOrderAsync(Order order)
-    {
-        await CreateAsync(order);
-        return order;
-    }
+    public void CreateOrder(Order order) => Create(order);
 
     public async Task<Order> UpdateOrderAsync(Order order)
     {
@@ -30,10 +26,6 @@ public class OrderRepository : RepositoryBase<Order, long, OrderContext>, IOrder
     }
 
     public async Task<Order?> GetOrder(long id) => await GetByIdAsync(id);
-    
-    public async Task DeleteOrder(long id)
-    {
-        var order = await GetOrder(id);
-        if (order is not null) _ = DeleteAsync(order);
-    }
+
+    public void DeleteOrder(Order order) => Delete(order);
 }

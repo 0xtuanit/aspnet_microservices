@@ -8,12 +8,12 @@ namespace Ordering.Application.Features.V1.Orders;
 
 public class DeleteOrderCommandHandler : IRequestHandler<DeleteOrderCommand>
 {
-    private readonly IOrderRepository _repository;
+    private readonly IOrderRepository _orderRepository;
     private readonly ILogger _logger;
 
-    public DeleteOrderCommandHandler(IOrderRepository repository, ILogger logger)
+    public DeleteOrderCommandHandler(IOrderRepository orderRepository, ILogger logger)
     {
-        _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+        _orderRepository = orderRepository ?? throw new ArgumentNullException(nameof(orderRepository));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
@@ -21,11 +21,12 @@ public class DeleteOrderCommandHandler : IRequestHandler<DeleteOrderCommand>
 
     public async Task Handle(DeleteOrderCommand command, CancellationToken cancellationToken)
     {
-        var orderEntity = await _repository.GetByIdAsync(command.Id);
+        var orderEntity = await _orderRepository.GetByIdAsync(command.Id);
         if (orderEntity == null) throw new NotFoundException(nameof(Order), command.Id);
 
-        _repository.DeleteAsync(orderEntity);
-        _repository.SaveChangesAsync();
+        _orderRepository.DeleteOrder(orderEntity);
+        orderEntity.DeletedOrder(); // Raise DeletedOrder event
+        await _orderRepository.SaveChangesAsync();
 
         _logger.Information($"Order {orderEntity.Id} was successfully deleted.");
     }

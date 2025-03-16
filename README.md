@@ -80,6 +80,7 @@ docker-compose down
     - dotnet ef migrations add "Order_Add_Status" -p Ordering.Infrastructure --startup-project Ordering.API --output-dir Persistence/Migrations
     - dotnet ef database update -p Ordering.Infrastructure --startup-project Ordering.API
 - Revert everything before removing migrations when there's any error:
-    - "dotnet ef database update 0   // The number 0 is a special case that means before the first migration and causes all migrations to be reverted.
+       // The number 0 is a special case that means before the first migration and causes all migrations to be reverted.
+    - "dotnet ef database update 0 -p Ordering.Infrastructure --startup-project Ordering.API   
        dotnet ef migrations remove -p Ordering.Infrastructure --startup-project Ordering.API
        dotnet ef database drop -p Ordering.Infrastructure --startup-project Ordering.API" 

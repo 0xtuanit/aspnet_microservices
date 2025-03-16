@@ -1,5 +1,7 @@
 using Contracts.Common.Interfaces;
+using Contracts.Domains.Interfaces;
 using Infrastructure.Common;
+using Infrastructure.Common.Repositories;
 using Microsoft.EntityFrameworkCore;
 using MySqlConnector;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
@@ -43,7 +45,7 @@ public static class ServiceExtensions
 
     private static IServiceCollection AddInfrastructureServices(this IServiceCollection services)
     {
-        return services.AddScoped(typeof(IRepositoryBaseAsync<,,>), typeof(RepositoryBase<,,>))
+        return services.AddScoped(typeof(IRepositoryBase<,,>), typeof(RepositoryBase<,,>))
             .AddScoped(serviceType: typeof(IUnitOfWork<>), implementationType: typeof(UnitOfWork<>))
             .AddScoped<IProductRepository, ProductRepository>();
     }

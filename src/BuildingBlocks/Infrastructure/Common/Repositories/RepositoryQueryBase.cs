@@ -1,9 +1,9 @@
 using System.Linq.Expressions;
-using Contracts.Common.Interfaces;
 using Contracts.Domains;
+using Contracts.Domains.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.Common;
+namespace Infrastructure.Common.Repositories;
 
 public class RepositoryQueryBase<T, TK, TContext> : IRepositoryQueryBase<T, TK, TContext>
     where T : EntityBase<TK>
@@ -48,9 +48,4 @@ public class RepositoryQueryBase<T, TK, TContext> : IRepositoryQueryBase<T, TK, 
     public async Task<T?> GetByIdAsync(TK id, params Expression<Func<T, object>>[] includeProperties) =>
         await FindByCondition(x => x.Id != null && x.Id.Equals(id), trackChanges: false, includeProperties)
             .FirstOrDefaultAsync();
-
-    public Task<int> SaveChangesAsync()
-    {
-        throw new NotImplementedException();
-    }
 }
