@@ -1,4 +1,6 @@
 using AutoMapper;
+using Infrastructure.Common.Models;
+using Infrastructure.Extensions;
 using Inventory.Product.API.Entities;
 using Inventory.Product.API.Extensions;
 using Inventory.Product.API.Repositories;
@@ -27,7 +29,7 @@ public class InventoryService : MongoDbRepository<InventoryEntry>, IInventorySer
         return result;
     }
 
-    public async Task<IEnumerable<InventoryEntryDto>> GetAllByItemNoPagingAsync(GetInventoryPagingQuery query)
+    public async Task<PagedList<InventoryEntryDto>> GetAllByItemNoPagingAsync(GetInventoryPagingQuery query)
     {
         var filterSearchTerm = Builders<InventoryEntry>.Filter.Empty;
         var filterItemNo = Builders<InventoryEntry>.Filter.Eq(x => x.ItemNo, query.ItemNo());
@@ -35,12 +37,13 @@ public class InventoryService : MongoDbRepository<InventoryEntry>, IInventorySer
             filterSearchTerm = Builders<InventoryEntry>.Filter.Eq(x => x.DocumentNo, query.SearchTerm);
 
         var andFilter = filterItemNo & filterSearchTerm;
-        var pagedList = await Collection.Find(andFilter)
-            .Skip((query.PageIndex - 1) * query.PageSize)
-            .Limit(query.PageSize)
-            .ToListAsync();
+        var pagedList =
+            await Collection.PaginatedListAsync(andFilter, pageIndex: query.PageIndex, pageSize: query.PageSize);
 
-        var result = _mapper.Map<IEnumerable<InventoryEntryDto>>(pagedList);
+        var items = _mapper.Map<IEnumerable<InventoryEntryDto>>(pagedList);
+        var result = new PagedList<InventoryEntryDto>(items, pagedList.GetMetaData().TotalItems,
+            pageIndex: query.PageIndex, pageSize: query.PageSize);
+
         return result;
     }
 
@@ -57,12 +60,13 @@ public class InventoryService : MongoDbRepository<InventoryEntry>, IInventorySer
     {
         var entity = new InventoryEntry(ObjectId.GenerateNewId().ToString())
         {
-            ItemNo = model.ItemNo,
+            ItemNo = itemNo,
             Quantity = model.Quantity,
             DocumentType = model.DocumentType,
         };
         await CreateAsync(entity);
         var result = _mapper.Map<InventoryEntryDto>(entity);
+
         return result;
     }
 }

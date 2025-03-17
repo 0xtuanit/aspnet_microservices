@@ -22,4 +22,6 @@ public class CatalogProduct : EntityAuditBase<long>
 
     [Column(TypeName = "decimal(12,2)")]
     public decimal Price { get; set; }
+    
+    public int StockQuantity { get; set; } // This field is triggered by Inventory's event, not by management
 }
