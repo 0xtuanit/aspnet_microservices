@@ -2,6 +2,7 @@ using AutoMapper;
 using MediatR;
 using Ordering.Application.Common.Interfaces;
 using Ordering.Application.Common.Models;
+using Ordering.Domain.Entities;
 using Shared.SeedWork;
 using ILogger = Serilog.ILogger;
 
@@ -22,7 +23,7 @@ public class GetOrdersQueryHandler : IRequestHandler<GetOrdersQuery, ApiResult<L
 
     private const string MethodName = "GetOrdersQueryHandler";
 
-    public async Task<ApiResult<List<OrderDto>?>> Handle(GetOrdersQuery request, CancellationToken cancellationToken)
+    public async Task<ApiResult<List<OrderDto>>> Handle(GetOrdersQuery request, CancellationToken cancellationToken)
     {
         _logger.Information($"BEGIN: {MethodName} - Username: {request.Username}");
 
@@ -31,6 +32,6 @@ public class GetOrdersQueryHandler : IRequestHandler<GetOrdersQuery, ApiResult<L
 
         _logger.Information($"END: {MethodName} - Username: {request.Username}");
 
-        return new ApiSuccessResult<List<OrderDto>?>(orderList);
+        return new ApiSuccessResult<List<OrderDto>>(orderList);
     }
 }

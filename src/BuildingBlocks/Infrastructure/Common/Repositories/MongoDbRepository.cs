@@ -26,9 +26,9 @@ public class MongoDbRepository<T> : IMongoDbRepositoryBase<T> where T : MongoEnt
 
     public Task UpdateAsync(T entity)
     {
-        Expression<Func<T, string>> func = f => f.Id;
+        Expression<Func<T, string>> func = f => f.Id ?? string.Empty;
         var value = (string)entity.GetType()
-            .GetProperty(func.Body.ToString().Split(".")[1])?.GetValue(entity, null);
+            .GetProperty(func.Body.ToString().Split(".")[1])?.GetValue(entity, null)!;
         var filter = Builders<T>.Filter.Eq(func, value);
 
         return Collection.ReplaceOneAsync(filter, entity);

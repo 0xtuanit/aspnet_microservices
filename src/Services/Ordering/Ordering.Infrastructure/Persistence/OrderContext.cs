@@ -77,7 +77,7 @@ public class OrderContext : DbContext
         }
 
         var result = base.SaveChangesAsync(cancellationToken);
-        _mediator.DispatchDomainEventAsync(_baseEvents, _logger);
+        _ = _mediator.DispatchDomainEventAsync(_baseEvents, _logger);
 
         return result;
     }

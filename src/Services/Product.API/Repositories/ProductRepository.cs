@@ -14,7 +14,7 @@ public class ProductRepository : RepositoryBase<CatalogProduct, long, ProductCon
     {
     }
 
-    public async Task<IEnumerable<CatalogProduct>> GetProducts() => await FindAll().ToListAsync();
+    public async Task<IEnumerable<CatalogProduct>?> GetProducts() => await FindAll().ToListAsync();
 
     public async Task<CatalogProduct?> GetProduct(long id) => await GetByIdAsync(id);
 

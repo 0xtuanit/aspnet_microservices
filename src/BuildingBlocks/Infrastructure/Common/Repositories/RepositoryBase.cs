@@ -31,7 +31,7 @@ public class RepositoryBase<T, TK, TContext> : RepositoryQueryBase<T, TK, TConte
 
     public void Create(T entity) => _dbContext.Set<T>().Add(entity);
 
-    public async Task<TK> CreateAsync(T entity)
+    public async Task<TK?> CreateAsync(T entity)
     {
         await _dbContext.Set<T>().AddAsync(entity);
         await SaveChangesAsync();

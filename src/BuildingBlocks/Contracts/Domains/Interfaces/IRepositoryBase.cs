@@ -9,9 +9,9 @@ public interface IRepositoryQueryBase<T, TK> where T : EntityBase<TK>
 {
     IQueryable<T> FindAll(bool trackChanges = false);
     IQueryable<T> FindAll(bool trackChanges = false, params Expression<Func<T, object>>[] includeProperties);
-    IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression, bool trackChanges = false);
+    IQueryable<T?> FindByCondition(Expression<Func<T, bool>> expression, bool trackChanges = false);
 
-    IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression, bool trackChanges = false,
+    IQueryable<T?> FindByCondition(Expression<Func<T, bool>> expression, bool trackChanges = false,
         params Expression<Func<T, object>>[] includeProperties);
 
     Task<T?> GetByIdAsync(TK id);
@@ -30,7 +30,7 @@ public interface IRepositoryBase<T, K> : IRepositoryQueryBase<T, K>
     where T : EntityBase<K>
 {
     void Create(T entity);
-    Task<K> CreateAsync(T entity);
+    Task<K?> CreateAsync(T entity);
     IList<K> CreateList(IEnumerable<T> entities);
     Task<IList<K>> CreateListAsync(IEnumerable<T> entities);
     void Update(T entity);

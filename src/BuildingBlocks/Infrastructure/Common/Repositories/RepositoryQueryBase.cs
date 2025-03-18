@@ -29,16 +29,19 @@ public class RepositoryQueryBase<T, TK, TContext> : IRepositoryQueryBase<T, TK, 
         return items;
     }
 
-    public IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression, bool trackChanges = false) =>
+    public IQueryable<T?> FindByCondition(Expression<Func<T, bool>> expression, bool trackChanges = false) =>
         !trackChanges
             ? _dbContext.Set<T>().Where(expression).AsNoTracking()
             : _dbContext.Set<T>().Where(expression);
 
-    public IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression, bool trackChanges = false,
+    public IQueryable<T?> FindByCondition(Expression<Func<T, bool>> expression, bool trackChanges = false,
         params Expression<Func<T, object>>[] includeProperties)
     {
         var items = FindByCondition(expression, trackChanges);
-        items = includeProperties.Aggregate(items, (current, includeProperty) => current.Include(includeProperty));
+        items = includeProperties.Aggregate(items,
+            (current, includeProperty)
+                => current.Include<T, object>(includeProperty));
+
         return items;
     }
 

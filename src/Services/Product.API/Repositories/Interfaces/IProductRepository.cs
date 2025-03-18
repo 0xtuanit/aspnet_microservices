@@ -6,7 +6,7 @@ namespace Product.API.Repositories.Interfaces;
 
 public interface IProductRepository : IRepositoryBase<CatalogProduct, long, ProductContext>
 {
-    Task<IEnumerable<CatalogProduct>> GetProducts();
+    Task<IEnumerable<CatalogProduct>?> GetProducts();
 
     Task<CatalogProduct?> GetProduct(long id);
 
