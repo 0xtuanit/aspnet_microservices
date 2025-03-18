@@ -1,12 +1,12 @@
 using AutoMapper;
 using Infrastructure.Common.Models;
+using Infrastructure.Common.Repositories;
 using Infrastructure.Extensions;
 using Inventory.Product.API.Entities;
-using Inventory.Product.API.Extensions;
-using Inventory.Product.API.Repositories;
 using Inventory.Product.API.Services.Interfaces;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using Shared.Configurations;
 using Shared.DTOs.Inventory;
 
 namespace Inventory.Product.API.Services;
@@ -15,7 +15,7 @@ public class InventoryService : MongoDbRepository<InventoryEntry>, IInventorySer
 {
     private readonly IMapper _mapper;
 
-    public InventoryService(IMongoClient client, DatabaseSettings settings, IMapper mapper) : base(client, settings)
+    public InventoryService(IMongoClient client, MongoDbSettings settings, IMapper mapper) : base(client, settings)
     {
         _mapper = mapper;
     }
@@ -47,7 +47,7 @@ public class InventoryService : MongoDbRepository<InventoryEntry>, IInventorySer
         return result;
     }
 
-    public async Task<InventoryEntryDto> GetByIdAsync(string id)
+    public async Task<InventoryEntryDto?> GetByIdAsync(string id)
     {
         FilterDefinition<InventoryEntry> filter = Builders<InventoryEntry>.Filter.Eq(x => x.Id, id);
         var entity = await FindAll().Find(filter).FirstOrDefaultAsync();

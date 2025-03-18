@@ -1,16 +1,17 @@
 using System.Linq.Expressions;
-using Inventory.Product.API.Entities.Abstraction;
-using Inventory.Product.API.Extensions;
-using Inventory.Product.API.Repositories.Abstraction;
+using Contracts.Domains;
+using Contracts.Domains.Interfaces;
+using Infrastructure.Extensions;
 using MongoDB.Driver;
+using Shared.Configurations;
 
-namespace Inventory.Product.API.Repositories;
+namespace Infrastructure.Common.Repositories;
 
 public class MongoDbRepository<T> : IMongoDbRepositoryBase<T> where T : MongoEntity
 {
     private IMongoDatabase Database { get; }
 
-    public MongoDbRepository(IMongoClient client, DatabaseSettings settings)
+    public MongoDbRepository(IMongoClient client, MongoDbSettings settings)
     {
         Database = client.GetDatabase(settings.DatabaseName);
     }
