@@ -37,7 +37,7 @@ public class BasketsController : ControllerBase
         return Ok(result ?? new Cart());
     }
 
-    [HttpPut(Name = "UpdateBasket")]
+    [HttpPost(Name = "UpdateBasket")]
     [ProducesResponseType(typeof(Cart), (int)HttpStatusCode.OK)]
     public async Task<ActionResult<Cart>> UpdateBasket([FromBody] Cart cart)
     {

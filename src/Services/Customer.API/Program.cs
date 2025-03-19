@@ -47,28 +47,7 @@ try
 
     app.MapCustomersApi();
 
-    // app.MapPost("/api/customers",
-    //     async (Customer.API.Entities.Customer customer, ICustomerRepository customerRepository) =>
-    //     {
-    //         customerRepository.CreateAsync(customer);
-    //         customerRepository.SaveChangesAsync();
-    //     });
-    //
-    // app.MapDelete("/api/customers/{id}", async (int id, ICustomerRepository customerRepository) =>
-    // {
-    //     var customer = await customerRepository
-    //         .FindByCondition(x => x.Id.Equals(id))
-    //         .SingleOrDefaultAsync();
-    //
-    //     if (customer == null) return Results.NotFound();
-    //
-    //     await customerRepository.DeleteAsync(customer);
-    //     Console.WriteLine("Before SaveChangesAsync");
-    //     await customerRepository.SaveChangesAsync();
-    //     Console.WriteLine("After SaveChangesAsync");
-    //
-    //     return Results.NoContent();
-    // });
+    
 
     // Looks the same as MapPost above.
     // But will use DTO, not directly use Entities (=> no need to use all fields of Entities)
