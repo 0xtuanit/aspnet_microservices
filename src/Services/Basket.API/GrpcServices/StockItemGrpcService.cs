@@ -1,4 +1,4 @@
-using Inventory.Grpc.Protos;
+using Inventory.Grpc.Client;
 
 namespace Basket.API.GrpcServices;
 

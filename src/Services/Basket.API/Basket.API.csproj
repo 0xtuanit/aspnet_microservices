@@ -23,8 +23,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Protobuf Include="..\Inventory\Inventory.Grpc\Protos\stock.proto">
-      <Link>Protos\stock.proto</Link>
+    <Folder Include="Protos\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Protobuf Include="Protos\stockItem.proto">
+      <Link>Protos\stockItem.proto</Link>
       <GrpcServices>Client</GrpcServices>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Protobuf>
