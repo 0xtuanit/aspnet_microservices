@@ -14,7 +14,6 @@ Log.Information($"Start {builder.Environment.ApplicationName} up");
 try
 {
     // Add services to the container.
-    builder.Host.UseSerilog(Serilogger.Configure);
     builder.Host.AddAppConfigurations();
 
     builder.Services.AddConfigurationSettings(builder.Configuration);
