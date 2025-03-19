@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Product.API.Entities;
 using Product.API.Repositories.Interfaces;
@@ -44,6 +45,7 @@ public class ProductsController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize]
     public async Task<IActionResult> CreateProduct([FromBody] CreateProductDto productDto)
     {
         var product = _mapper.Map<CatalogProduct>(productDto);
@@ -55,6 +57,7 @@ public class ProductsController : ControllerBase
     }
 
     [HttpPut("{id:long}")]
+    [Authorize]
     public async Task<IActionResult> UpdateProduct([Required] long id, [FromBody] UpdateProductDto productDto)
     {
         var product = await _repository.GetProduct(id);
@@ -70,6 +73,7 @@ public class ProductsController : ControllerBase
     }
 
     [HttpDelete("{id:long}")]
+    [Authorize]
     public async Task<IActionResult> DeleteProduct([Required] long id)
     {
         var product = await _repository.GetProduct(id);

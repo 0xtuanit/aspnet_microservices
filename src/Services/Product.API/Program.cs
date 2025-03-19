@@ -1,4 +1,3 @@
-using Common.Logging;
 using Product.API.Extensions;
 using Product.API.Persistence;
 using Serilog;
@@ -11,9 +10,9 @@ Log.Information("Starting Product API up");
 
 try
 {
-    builder.Host.UseSerilog(Serilogger.Configure);
     builder.Host.AddAppConfigurations();
     // Add services to the container.
+    builder.Services.AddConfigurationSettings(builder.Configuration);
     builder.Services.AddInfrastructure(builder.Configuration);
 
     var app = builder.Build();
