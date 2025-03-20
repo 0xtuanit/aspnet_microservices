@@ -1,3 +1,4 @@
+using Infrastructure.Middlewares;
 using Product.API.Extensions;
 using Product.API.Persistence;
 using Serilog;
@@ -12,7 +13,7 @@ try
 {
     builder.Host.AddAppConfigurations();
     // Add services to the container.
-    builder.Services.AddConfigurationSettings(builder.Configuration);
+    // builder.Services.AddConfigurationSettings(builder.Configuration);
     builder.Services.AddInfrastructure(builder.Configuration);
 
     var app = builder.Build();
@@ -23,7 +24,7 @@ try
         ProductContextSeed.SeedProductAsync(context, Log.Logger).Wait();
     }).Run();
 
-    app.Run();
+    // app.Run();
 }
 catch (Exception ex)
 {

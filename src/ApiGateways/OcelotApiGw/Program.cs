@@ -15,6 +15,7 @@ try
 {
     // Add services to the container.
     builder.Host.AddAppConfigurations();
+    builder.Services.AddTransient<ErrorWrappingMiddleware>();
     builder.Services.AddConfigurationSettings(builder.Configuration);
     builder.Services.AddControllers();
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -36,10 +37,21 @@ try
     app.UseCors("CorsPolicy");
 
     app.UseMiddleware<ErrorWrappingMiddleware>();
+    app.UseAuthentication();
+    app.UseRouting();
 
     //app.UseHttpsRedirection();
 
     app.UseAuthorization();
+    app.UseEndpoints(endpoints =>
+    {
+        endpoints.MapGet("/",
+            async context =>
+            {
+                await context.Response.WriteAsync(
+                    $"Hello ION members! This is {builder.Environment.ApplicationName}");
+            });
+    });
 
     app.MapControllers();
 

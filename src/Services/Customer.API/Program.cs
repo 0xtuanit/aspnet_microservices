@@ -8,6 +8,7 @@ using Customer.API.Repositories.Interfaces;
 using Customer.API.Services;
 using Customer.API.Services.Interfaces;
 using Infrastructure.Common.Repositories;
+using Infrastructure.Middlewares;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
@@ -38,7 +39,8 @@ try
     // We have to configure all these for declaring ICustomer repo & ICustomer service
     builder.Services.AddScoped<ICustomerRepository, CustomerRepository>()
         .AddScoped(typeof(IRepositoryQueryBase<,,>), typeof(RepositoryQueryBase<,,>))
-        .AddScoped<ICustomerService, CustomerService>();
+        .AddScoped<ICustomerService, CustomerService>()
+        .AddTransient<ErrorWrappingMiddleware>();
 
     var app = builder.Build();
 
@@ -47,7 +49,6 @@ try
 
     app.MapCustomersApi();
 
-    
 
     // Looks the same as MapPost above.
     // But will use DTO, not directly use Entities (=> no need to use all fields of Entities)

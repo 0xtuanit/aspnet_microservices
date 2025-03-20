@@ -1,4 +1,5 @@
 using Infrastructure.Extensions;
+using Infrastructure.Middlewares;
 using Inventory.Product.API.Services;
 using Inventory.Product.API.Services.Interfaces;
 using MongoDB.Driver;
@@ -40,5 +41,6 @@ public static class ServiceExtensions
     {
         services.AddAutoMapper(cfg => cfg.AddProfile(new MappingProfile()));
         services.AddScoped<IInventoryService, InventoryService>();
+        services.AddTransient<ErrorWrappingMiddleware>();
     }
 }

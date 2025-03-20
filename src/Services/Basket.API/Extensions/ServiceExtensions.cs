@@ -5,6 +5,7 @@ using Contracts.Common.Interfaces;
 using EventBus.Messages.IntegrationEvents.Interfaces;
 using Infrastructure.Common;
 using Infrastructure.Extensions;
+using Infrastructure.Middlewares;
 using Inventory.Grpc.Client;
 using MassTransit;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -35,7 +36,8 @@ namespace Basket.API.Extensions
 
         public static IServiceCollection ConfigureServices(this IServiceCollection services) =>
             services.AddScoped<IBasketRepository, BasketRepository>()
-                .AddTransient<ISerializeService, SerializeService>();
+                .AddTransient<ISerializeService, SerializeService>()
+                .AddTransient<ErrorWrappingMiddleware>();
 
 
         public static void ConfigureRedis(this IServiceCollection services, IConfiguration configuration)

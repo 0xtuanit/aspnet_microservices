@@ -5,6 +5,7 @@ using Infrastructure.Common;
 using Infrastructure.Common.Repositories;
 using Infrastructure.Extensions;
 using Infrastructure.Identity;
+using Infrastructure.Middlewares;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -19,15 +20,15 @@ namespace Product.API.Extensions;
 
 public static class ServiceExtensions
 {
-    internal static IServiceCollection AddConfigurationSettings(this IServiceCollection services,
-        IConfiguration configuration)
-    {
-        var jwtSettings = configuration.GetSection(nameof(JwtSettings))
-            .Get<JwtSettings>();
-        services.AddSingleton(jwtSettings);
-
-        return services;
-    }
+    // internal static IServiceCollection AddConfigurationSettings(this IServiceCollection services,
+    //     IConfiguration configuration)
+    // {
+    //     var jwtSettings = configuration.GetSection(nameof(JwtSettings))
+    //         .Get<JwtSettings>();
+    //     services.AddSingleton(jwtSettings);
+    //
+    //     return services;
+    // }
 
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
@@ -39,38 +40,6 @@ public static class ServiceExtensions
         services.ConfigureProductDbContext(configuration);
         services.AddInfrastructureServices();
         services.AddAutoMapper(cfg => cfg.AddProfile(new MappingProfile()));
-        services.AddJwtAuthentication();
-
-        return services;
-    }
-
-    internal static IServiceCollection AddJwtAuthentication(this IServiceCollection services)
-    {
-        var settings = services.GetOptions<JwtSettings>(nameof(JwtSettings));
-        if (settings == null || string.IsNullOrEmpty(settings.Key))
-            throw new ArgumentNullException($"{nameof(JwtSettings)} is not configured properly");
-
-        var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(settings.Key));
-        var tokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = signingKey,
-            ValidateIssuer = false,
-            ValidateAudience = false,
-            ValidateLifetime = false,
-            ClockSkew = TimeSpan.Zero,
-            RequireExpirationTime = false
-        };
-        services.AddAuthentication(o =>
-        {
-            o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        }).AddJwtBearer(x =>
-        {
-            x.SaveToken = true;
-            x.RequireHttpsMetadata = false;
-            x.TokenValidationParameters = tokenValidationParameters;
-        });
 
         return services;
     }
@@ -96,6 +65,6 @@ public static class ServiceExtensions
         return services.AddScoped(typeof(IRepositoryBase<,,>), typeof(RepositoryBase<,,>))
             .AddScoped(serviceType: typeof(IUnitOfWork<>), implementationType: typeof(UnitOfWork<>))
             .AddScoped<IProductRepository, ProductRepository>()
-            .AddTransient<ITokenService, TokenService>();
+            .AddTransient<ErrorWrappingMiddleware>();
     }
 }
