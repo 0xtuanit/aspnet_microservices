@@ -54,6 +54,11 @@
                 "Period": "2s", // 1s, 5p, 1h, 1d
                 "PeriodTimespan": 1, // Retry after a certain number of seconds
                 "Limit": 1 // the maximum numbers of request that a client can make in a defined period
+            },
+            "QoSOptions": {
+                "ExceptionsAllowedBeforeBreaking": 2, // If a service doesn't respond for 2s => throw a timeout exception 
+                "DurationOfBreak": 1000, // ms
+                "TimeoutValue": 5000 // If a service throws a second exception, it won't be accessible for 5 seconds
             }
         },
         {

@@ -47,6 +47,9 @@ public class ErrorWrappingMiddleware : IMiddleware
             case ValidationException:
                 code = HttpStatusCode.BadRequest;
                 break;
+            case TimeoutException:
+                code = HttpStatusCode.GatewayTimeout;
+                break;
             default:
                 code = HttpStatusCode.InternalServerError;
                 break;
