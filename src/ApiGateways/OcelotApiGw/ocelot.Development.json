@@ -37,6 +37,7 @@
         {
             "UpstreamPathTemplate": "/products",
             "UpstreamHttpMethod": [
+                "GET",
                 "POST"
             ],
             "DownstreamPathTemplate": "/api/products",
@@ -46,7 +47,14 @@
                     "Host": "localhost",
                     "Port": 5002
                 }
-            ]
+            ],
+            "RateLimitOptions": {
+                "ClientWhiteList": [], // the clients in this array won't be affected by the rate limit
+                "EnableRateLimiting": true,
+                "Period": "2s", // 1s, 5p, 1h, 1d
+                "PeriodTimespan": 1, // Retry after a certain number of seconds
+                "Limit": 1 // the maximum numbers of request that a client can make in a defined period
+            }
         },
         {
             "UpstreamPathTemplate": "/products/{any}",
