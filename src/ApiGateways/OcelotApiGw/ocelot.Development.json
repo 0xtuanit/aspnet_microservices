@@ -51,7 +51,20 @@
         {
             "UpstreamPathTemplate": "/products/{any}",
             "UpstreamHttpMethod": [
-                "GET",
+                "GET"
+            ],
+            "DownstreamPathTemplate": "/api/products/{any}",
+            "DownstreamSchema": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "localhost",
+                    "Port": 5002
+                }
+            ]
+        },
+        {
+            "UpstreamPathTemplate": "/products/{any}",
+            "UpstreamHttpMethod": [
                 "PUT",
                 "DELETE"
             ],
@@ -62,7 +75,14 @@
                     "Host": "localhost",
                     "Port": 5002
                 }
-            ]
+            ],
+            "AuthenticationOptions": {
+                "AuthenticationProviderKey": "Bearer",
+                "AllowedScopes": []
+            },
+            "RouteClaimsRequirement": {
+                "Role": "Admin"
+            }
         },
         {
             "UpstreamPathTemplate": "/products/get-product-by-no/{any}",
