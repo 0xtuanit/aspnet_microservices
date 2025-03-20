@@ -4,6 +4,8 @@ using Infrastructure.Extensions;
 using Infrastructure.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Ocelot.Cache;
+using Ocelot.Cache.CacheManager;
 using Ocelot.DependencyInjection;
 using Ocelot.Provider.Polly;
 using Shared.Configurations;
@@ -24,7 +26,9 @@ public static class ServiceExtensions
     public static void ConfigureOcelot(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddOcelot(configuration)
-            .AddPolly();
+            .AddPolly()
+            .AddCacheManager(x => { x.WithDictionaryHandle(); });
+        // services.AddSingleton<IOcelotCache<CachedResponse>, IonCached>(); // Our own class if we want to override
         services.AddTransient<ITokenService, TokenService>();
         services.AddJwtAuthentication();
     }
