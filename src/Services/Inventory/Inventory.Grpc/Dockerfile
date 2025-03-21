@@ -16,7 +16,7 @@ WORKDIR "/src/Services/Inventory/Inventory.Grpc"
 RUN dotnet build "Inventory.Grpc.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "Inventory.Grpc.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "Inventory.Grpc.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app

@@ -16,7 +16,7 @@ WORKDIR "/src/Services/Inventory/Inventory.Product.API"
 RUN dotnet build "Inventory.Product.API.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "Inventory.Product.API.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "Inventory.Product.API.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app

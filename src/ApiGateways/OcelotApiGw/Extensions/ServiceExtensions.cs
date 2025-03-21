@@ -19,7 +19,7 @@ public static class ServiceExtensions
     {
         var jwtSettings = configuration.GetSection(nameof(JwtSettings))
             .Get<JwtSettings>();
-        services.AddSingleton(jwtSettings);
+        if (jwtSettings != null) services.AddSingleton(jwtSettings);
         return services;
     }
 

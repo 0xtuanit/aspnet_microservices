@@ -6,7 +6,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 		Architect.jpg = Architect.jpg
 		src\docker-compose.yml = src\docker-compose.yml
-		.dockerignore = .dockerignore
 		src\docker-compose.override.yml = src\docker-compose.override.yml
 		Architecture_updated.png = Architecture_updated.png
 		api-gateway_routing_list.png = api-gateway_routing_list.png
