@@ -30,7 +30,8 @@ public static class ServiceExtensions
             .AddCacheManager(x => { x.WithDictionaryHandle(); });
         // services.AddSingleton<IOcelotCache<CachedResponse>, IonCached>(); // Our own class if we want to override
         services.AddTransient<ITokenService, TokenService>();
-        services.AddJwtAuthentication();
+        // services.AddJwtAuthentication();
+        services.AddSwaggerForOcelot(configuration, x => { x.GenerateDocsForGatewayItSelf = false; });
     }
 
     public static void ConfigureCors(this IServiceCollection services, IConfiguration configuration)

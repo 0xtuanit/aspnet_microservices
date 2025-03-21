@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Shared.DTOs.Customer;
 
-public abstract class CreateOrUpdateCustomerDto
+public class CreateOrUpdateCustomerDto
 {
     [Required]
     public string? Username { get; set; }

@@ -29,34 +29,36 @@ try
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())
     {
-        app.UseSwagger();
-        app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json",
-            $"{builder.Environment.ApplicationName} v1"));
+        // app.UseSwagger();
+        // app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json",
+        //     $"{builder.Environment.ApplicationName} v1"));
     }
 
     app.UseCors("CorsPolicy");
 
     app.UseMiddleware<ErrorWrappingMiddleware>();
-    app.UseAuthentication();
+    // app.UseAuthentication();
     app.UseRouting();
 
     //app.UseHttpsRedirection();
 
-    app.UseAuthorization();
+    // app.UseAuthorization();
     app.UseEndpoints(endpoints =>
     {
-        endpoints.MapGet("/",
-            async context =>
-            {
-                await context.Response.WriteAsync(
-                    $"Hello ION members! This is {builder.Environment.ApplicationName}");
-            });
+        endpoints.MapGet("/", context =>
+        {
+            // await context.Response.WriteAsync(
+            //     $"Hello ION members! This is {builder.Environment.ApplicationName}");
+            context.Response.Redirect("swagger/index.html");
+            return Task.CompletedTask;
+        });
     });
 
     app.MapControllers();
 
-    await app.UseOcelot();
+    app.UseSwaggerForOcelotUI(opt => { opt.PathToSwaggerGenerator = "/swagger/docs"; });
 
+    await app.UseOcelot();
     app.Run();
 }
 catch (Exception ex)

@@ -4,7 +4,7 @@ using Contracts.Domains;
 
 namespace Customer.API.Entities;
 
-public class Customer : EntityBase<int>
+public class Customer : EntityBase<long>
 {
     [Required]
     [Column(TypeName = "varchar(150)")]

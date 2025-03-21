@@ -7,6 +7,7 @@ using Customer.API.Repositories;
 using Customer.API.Repositories.Interfaces;
 using Customer.API.Services;
 using Customer.API.Services.Interfaces;
+using Infrastructure.Common;
 using Infrastructure.Common.Repositories;
 using Infrastructure.Middlewares;
 using Microsoft.EntityFrameworkCore;
@@ -38,6 +39,7 @@ try
 
     // We have to configure all these for declaring ICustomer repo & ICustomer service
     builder.Services.AddScoped<ICustomerRepository, CustomerRepository>()
+        .AddScoped(serviceType: typeof(IUnitOfWork<>), implementationType: typeof(UnitOfWork<>))
         .AddScoped(typeof(IRepositoryQueryBase<,,>), typeof(RepositoryQueryBase<,,>))
         .AddScoped<ICustomerService, CustomerService>()
         .AddTransient<ErrorWrappingMiddleware>();
@@ -45,7 +47,7 @@ try
     var app = builder.Build();
 
     // Map URL following minimal API style
-    app.MapGet("/", () => $"Welcome to {builder.Environment.ApplicationName}!");
+    // app.MapGet("/", () => $"Welcome to {builder.Environment.ApplicationName}!");
 
     app.MapCustomersApi();
 

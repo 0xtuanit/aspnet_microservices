@@ -30,4 +30,6 @@ public class CustomerService : ICustomerService
     }
 
     public async Task<IResult> GetCustomers() => Results.Ok(await _repository.GetCustomersAsync());
+
+    public Task<long> CreateCustomer(Entities.Customer customer) => _repository.CreateCustomer(customer);
 }

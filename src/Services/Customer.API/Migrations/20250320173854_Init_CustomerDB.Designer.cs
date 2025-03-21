@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Customer.API.Migrations
 {
     [DbContext(typeof(CustomerContext))]
-    [Migration("20250312145740_Init_CustomerDB")]
+    [Migration("20250320173854_Init_CustomerDB")]
     partial class Init_CustomerDB
     {
         /// <inheritdoc />
@@ -26,11 +26,11 @@ namespace Customer.API.Migrations
 
             modelBuilder.Entity("Customer.API.Entities.Customer", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("bigint");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("EmailAddress")
                         .IsRequired()

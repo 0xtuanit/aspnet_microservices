@@ -15,7 +15,7 @@ namespace Customer.API.Migrations
                 name: "Customers",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
+                    Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Username = table.Column<string>(type: "varchar(150)", nullable: false),
                     FirstName = table.Column<string>(type: "varchar(100)", nullable: false),

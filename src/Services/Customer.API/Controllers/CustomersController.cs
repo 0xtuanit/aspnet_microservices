@@ -1,5 +1,8 @@
 using Contracts.Domains.Core;
 using Customer.API.Services.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+using Shared.DTOs.Customer;
+using AutoMapper;
 
 namespace Customer.API.Controllers;
 
@@ -24,13 +27,14 @@ public static class CustomersController
             }
         });
 
-        // app.MapPost("/api/customers",
-        //     async (Customer.API.Entities.Customer customer, ICustomerRepository customerRepository) =>
-        //     {
-        //         customerRepository.CreateAsync(customer);
-        //         customerRepository.SaveChangesAsync();
-        //     });
-        //
+        app.MapPost("/api/customers",
+            async ([FromBody] CreateOrUpdateCustomerDto customerDto, ICustomerService customerService,
+                IMapper mapper) =>
+            {
+                var customer = mapper.Map<Entities.Customer>(customerDto);
+                await customerService.CreateCustomer(customer);
+            });
+
         // app.MapDelete("/api/customers/{id}", async (int id, ICustomerRepository customerRepository) =>
         // {
         //     var customer = await customerRepository
