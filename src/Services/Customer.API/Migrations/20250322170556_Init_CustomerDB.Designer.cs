@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Customer.API.Migrations
 {
     [DbContext(typeof(CustomerContext))]
-    [Migration("20250320173854_Init_CustomerDB")]
+    [Migration("20250322170556_Init_CustomerDB")]
     partial class Init_CustomerDB
     {
         /// <inheritdoc />

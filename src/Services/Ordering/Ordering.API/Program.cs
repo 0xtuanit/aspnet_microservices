@@ -1,4 +1,3 @@
-using Common.Logging;
 using Ordering.API.Extensions;
 using Ordering.Application;
 using Ordering.Infrastructure;
@@ -13,8 +12,8 @@ Log.Information("Starting Ordering API up");
 
 try
 {
-    // Add Services to the container.
     builder.Host.AddAppConfigurations();
+    // Add Services to the container.
     builder.Services.AddConfigurationSettings(builder.Configuration);
     builder.Services.AddApplicationServices();
     builder.Services.AddInfrastructureServices(builder.Configuration);
@@ -61,13 +60,13 @@ try
 }
 catch (Exception ex)
 {
-    var type = ex.GetType().Name;
+    string type = ex.GetType().Name;
     if (type.Equals("StopTheHostException", StringComparison.Ordinal)) throw;
 
     Log.Fatal(ex, $"Unhandled exception: {ex.Message}");
 }
 finally
 {
-    Log.Information("Shut down Ordering API complete");
+    Log.Information($"Shut down {builder.Environment.ApplicationName} complete");
     Log.CloseAndFlush();
 }

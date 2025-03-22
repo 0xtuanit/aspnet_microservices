@@ -1,4 +1,3 @@
-using Infrastructure.Middlewares;
 using Product.API.Extensions;
 using Product.API.Persistence;
 using Serilog;
@@ -12,9 +11,11 @@ Log.Information("Starting Product API up");
 try
 {
     builder.Host.AddAppConfigurations();
+
     // Add services to the container.
-    // builder.Services.AddConfigurationSettings(builder.Configuration);
+    builder.Services.AddConfigurationSettings(builder.Configuration);
     builder.Services.AddInfrastructure(builder.Configuration);
+    // builder.Services.AddConfigurationSettings(builder.Configuration);
 
     var app = builder.Build();
     app.UseInfrastructure();
@@ -29,15 +30,12 @@ try
 catch (Exception ex)
 {
     string type = ex.GetType().Name;
-    if (type.Equals("StopTheHostException", StringComparison.Ordinal))
-    {
-        throw;
-    }
+    if (type.Equals("StopTheHostException", StringComparison.Ordinal)) throw;
 
     Log.Fatal(ex, $"Unhandled exception: {ex.Message}");
 }
 finally
 {
-    Log.Information("Shut down Product API complete");
+    Log.Information($"Shut down {builder.Environment.ApplicationName} complete");
     Log.CloseAndFlush();
 }

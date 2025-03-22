@@ -13,7 +13,10 @@ services:
     image: bitnami/redis:7.4.2
 
   inventorydb:
-    image: bitnami/mongodb:8.0.5
+    image: mongodb/mongodb-community-server:8.0.5-ubi9
+
+  hangfiredb:
+    image: mongodb/mongodb-community-server:8.0.5-ubi9
 
   #Infrastructure section
   rabbitmq:
@@ -96,9 +99,13 @@ volumes:
     name: portainer_data
   elasticsearch_data:
     name: elasticsearch_data
+  kibana_data:
+    name: kibana_data
   jaeger_data:
     name: jaeger_data
   mongodb_data:
     name: mongodb_data
+  hangfire_mongo_data:
+    name: hangfire_mongo_data
   pgadmin_data:
     name: pgadmin_data

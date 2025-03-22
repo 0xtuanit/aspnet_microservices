@@ -14,5 +14,9 @@
       <ProjectReference Include="..\..\..\BuildingBlocks\Infrastructure\Infrastructure.csproj" />
       <ProjectReference Include="..\Ordering.Application\Ordering.Application.csproj" />
    </ItemGroup>
+   
+   <ItemGroup>
+     <Folder Include="Persistence\Migrations\" />
+   </ItemGroup>
 
 </Project>

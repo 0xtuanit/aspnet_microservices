@@ -1,14 +1,9 @@
-using System.Text;
 using Contracts.Domains.Interfaces;
-using Contracts.Identity;
 using Infrastructure.Common;
 using Infrastructure.Common.Repositories;
 using Infrastructure.Extensions;
-using Infrastructure.Identity;
 using Infrastructure.Middlewares;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using MySqlConnector;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Product.API.Persistence;
@@ -20,15 +15,19 @@ namespace Product.API.Extensions;
 
 public static class ServiceExtensions
 {
-    // internal static IServiceCollection AddConfigurationSettings(this IServiceCollection services,
-    //     IConfiguration configuration)
-    // {
-    //     var jwtSettings = configuration.GetSection(nameof(JwtSettings))
-    //         .Get<JwtSettings>();
-    //     services.AddSingleton(jwtSettings);
-    //
-    //     return services;
-    // }
+    internal static IServiceCollection AddConfigurationSettings(this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        var databaseSettings = configuration.GetSection(nameof(DatabaseSettings))
+            .Get<DatabaseSettings>();
+        if (databaseSettings != null) services.AddSingleton(databaseSettings);
+
+        var jwtSettings = configuration.GetSection(nameof(JwtSettings))
+            .Get<JwtSettings>();
+        if (jwtSettings != null) services.AddSingleton(jwtSettings);
+
+        return services;
+    }
 
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
@@ -47,9 +46,11 @@ public static class ServiceExtensions
     private static IServiceCollection ConfigureProductDbContext(this IServiceCollection services,
         IConfiguration configuration)
     {
-        var connectionString = configuration.GetConnectionString("DefaultConnectionString");
-        var builder = new MySqlConnectionStringBuilder(connectionString!);
+        var databaseSettings = services.GetOptions<DatabaseSettings>(nameof(DatabaseSettings));
+        if (databaseSettings == null || string.IsNullOrEmpty(databaseSettings.ConnectionString))
+            throw new ArgumentNullException("ConnectionString is not configured.");
 
+        var builder = new MySqlConnectionStringBuilder(databaseSettings.ConnectionString);
         services.AddDbContext<ProductContext>(m => m.UseMySql(builder.ConnectionString,
             ServerVersion.AutoDetect(builder.ConnectionString),
             e =>
@@ -57,6 +58,7 @@ public static class ServiceExtensions
                 e.MigrationsAssembly("Product.API");
                 e.SchemaBehavior(MySqlSchemaBehavior.Ignore);
             }));
+
         return services;
     }
 
