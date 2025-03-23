@@ -20,6 +20,7 @@ try
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
     builder.Services.AddIonHangfireService();
+    builder.Services.ConfigureServices();
 
     var app = builder.Build();
 
