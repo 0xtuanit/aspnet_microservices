@@ -8,18 +8,18 @@ namespace Hangfire.API.Controllers;
 [Route("api/scheduled-jobs")]
 public class ScheduledJobsController : ControllerBase
 {
-    private readonly IBackgroundJobService _bgJobService;
+    private readonly IBackgroundJobService _backgroundJobService;
 
-    public ScheduledJobsController(IBackgroundJobService bgJobService)
+    public ScheduledJobsController(IBackgroundJobService backgroundJobService)
     {
-        _bgJobService = bgJobService;
+        _backgroundJobService = backgroundJobService;
     }
 
     [HttpPost]
     [Route("send-email-reminder-checkout-order")]
     public IActionResult SendReminderCheckoutOrderEmail([FromBody] ReminderCheckoutOrderDto model)
     {
-        var jobId = _bgJobService.SendEmailContent(model.email, model.subject, model.emailContent, model.enqueueAt);
+        var jobId = _backgroundJobService.SendEmailContent(model.email, model.subject, model.emailContent, model.enqueueAt);
         return Ok(jobId);
     }
 }

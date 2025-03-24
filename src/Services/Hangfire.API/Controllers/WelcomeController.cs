@@ -8,12 +8,12 @@ namespace Hangfire.API.Controllers;
 [Route("api/[controller]")]
 public class WelcomeController : ControllerBase
 {
-    private readonly IScheduledJobService _jobService;
+    private readonly IScheduledJobService _scheduledJobService;
     private readonly ILogger _logger;
 
-    public WelcomeController(ILogger logger, IScheduledJobService jobService)
+    public WelcomeController(ILogger logger, IScheduledJobService scheduledJobService)
     {
-        _jobService = jobService;
+        _scheduledJobService = scheduledJobService;
         _logger = logger;
     }
 
@@ -21,7 +21,7 @@ public class WelcomeController : ControllerBase
     [Route("[action]")]
     public IActionResult Welcome()
     {
-        var jobId = _jobService.Enqueue(() => ResponseWelcome("Welcome to Hangfire API"));
+        var jobId = _scheduledJobService.Enqueue(() => ResponseWelcome("Welcome to Hangfire API"));
 
         return Ok($"Job Id: {jobId} - Enqueue Job");
     }
@@ -31,7 +31,7 @@ public class WelcomeController : ControllerBase
     public IActionResult DelayedWelcome()
     {
         const int seconds = 5;
-        var jobId = _jobService.Schedule(() => ResponseWelcome("Welcome to Hangfire API"),
+        var jobId = _scheduledJobService.Schedule(() => ResponseWelcome("Welcome to Hangfire API"),
             TimeSpan.FromSeconds(seconds));
 
         return Ok($"Job Id: {jobId} - Delayed Job");
@@ -42,7 +42,7 @@ public class WelcomeController : ControllerBase
     public IActionResult WelcomeAt()
     {
         var enqueueAt = DateTimeOffset.UtcNow.AddMinutes(1).AddSeconds(10);
-        var jobId = _jobService.Schedule(() => ResponseWelcome("Welcome to Hangfire API"),
+        var jobId = _scheduledJobService.Schedule(() => ResponseWelcome("Welcome to Hangfire API"),
             enqueueAt);
 
         return Ok($"Job Id: {jobId} - Schedule Job");
@@ -54,10 +54,10 @@ public class WelcomeController : ControllerBase
     {
         const int timeInSeconds = 5;
         var parentJobId =
-            _jobService.Schedule(() => ResponseWelcome("Welcome to Hangfire API"),
+            _scheduledJobService.Schedule(() => ResponseWelcome("Welcome to Hangfire API"),
                 TimeSpan.FromSeconds(timeInSeconds));
 
-        var jobId = _jobService.ContinueQueueWith(parentJobId,
+        var jobId = _scheduledJobService.ContinueQueueWith(parentJobId,
             () => ResponseWelcome("Welcome message is sent"));
 
         return Ok($"Job Id: {jobId} - Confirmed welcome will be sent in {timeInSeconds} seconds");

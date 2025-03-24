@@ -41,8 +41,8 @@ services:
   basketdb:
     container_name: basketdb
     environment:
-      - REDIS_PASSWORD=Admin3000
-#      - ALLOW_EMPTY_PASSWORD=yes
+#      - REDIS_PASSWORD=Admin3000
+      - ALLOW_EMPTY_PASSWORD=yes
     restart: always
     ports:
       - "6379:6379"
@@ -165,7 +165,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:80
-      - "CacheSettings:ConnectionString=redis:Admin3000@basketdb:6379"
+      - "CacheSettings:ConnectionString=basketdb:6379"
       - "GrpcSettings:StockUrl=http://inventory.grpc"
       - "EventBusSettings:HostAddress=amqp://thomas:Admin3000@rabbitmq:5672"
     depends_on:

@@ -1,6 +1,8 @@
+using Contracts.Configurations;
 using Contracts.Domains.Interfaces;
 using Contracts.Services;
 using Infrastructure.Common;
+using Infrastructure.Configurations;
 using Infrastructure.Extensions;
 using Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;

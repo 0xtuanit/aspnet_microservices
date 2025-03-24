@@ -1,5 +1,5 @@
-using Contracts.Configurations;
 using Contracts.Services;
+using Infrastructure.Configurations;
 using MailKit.Net.Smtp;
 using MimeKit;
 using Serilog;
@@ -10,10 +10,10 @@ namespace Infrastructure.Services;
 public class SmtpEmailService : ISmtpEmailService
 {
     private readonly ILogger _logger;
-    private readonly IEmailSMTPSettings _settings;
+    private readonly SMTPEmailSetting _settings;
     private readonly SmtpClient _smtpClient;
 
-    public SmtpEmailService(ILogger logger, IEmailSMTPSettings settings)
+    public SmtpEmailService(ILogger logger, SMTPEmailSetting settings)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _settings = settings ?? throw new ArgumentNullException(nameof(settings));
@@ -45,7 +45,6 @@ public class SmtpEmailService : ISmtpEmailService
     public void SendEmail(MailRequest request)
     {
         var emailMessage = getMineMessage(request);
-
         try
         {
             _smtpClient.Connect(_settings.SMTPServer, _settings.Port, _settings.UseSsl);

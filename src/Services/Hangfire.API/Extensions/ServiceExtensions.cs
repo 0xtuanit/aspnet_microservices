@@ -19,12 +19,15 @@ public static class ServiceExtensions
             .Get<HangfireSettings>();
         if (hangFireSettings != null) services.AddSingleton(hangFireSettings);
 
+        var emailSettings = configuration.GetSection(nameof(SMTPEmailSetting))
+            .Get<SMTPEmailSetting>();
+        if (emailSettings != null) services.AddSingleton(emailSettings);
+
         return services;
     }
 
     public static IServiceCollection ConfigureServices(this IServiceCollection services) =>
         services.AddTransient<IScheduledJobService, HangfireService>()
-            .AddScoped(typeof(IEmailSMTPSettings), typeof(SMTPEmailSetting))
             .AddScoped<ISmtpEmailService, SmtpEmailService>()
             .AddTransient<IBackgroundJobService, BackgroundJobService>();
 }
