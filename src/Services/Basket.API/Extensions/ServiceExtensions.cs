@@ -1,6 +1,8 @@
 ﻿using Basket.API.GrpcServices;
 using Basket.API.Repositories;
 using Basket.API.Repositories.Interfaces;
+using Basket.API.Services;
+using Basket.API.Services.Interfaces;
 using Contracts.Common.Interfaces;
 using EventBus.Messages.IntegrationEvents.Interfaces;
 using Infrastructure.Common;
@@ -20,7 +22,6 @@ namespace Basket.API.Extensions
         {
             var eventBusSettings = configuration.GetSection(nameof(EventBusSettings))
                 .Get<EventBusSettings>();
-
             if (eventBusSettings != null) services.AddSingleton(eventBusSettings);
 
             var cacheSettings = configuration.GetSection(nameof(CacheSettings))
@@ -37,14 +38,15 @@ namespace Basket.API.Extensions
         public static IServiceCollection ConfigureServices(this IServiceCollection services) =>
             services.AddScoped<IBasketRepository, BasketRepository>()
                 .AddTransient<ISerializeService, SerializeService>()
+                .AddTransient<IEmailTemplateService, BasketEmailTemplateService>()
                 .AddTransient<ErrorWrappingMiddleware>();
 
 
         public static void ConfigureRedis(this IServiceCollection services, IConfiguration configuration)
         {
-            var settings = services.GetOptions<CacheSettings>("CacheSettings");
+            var settings = services.GetOptions<CacheSettings>(nameof(CacheSettings));
             if (string.IsNullOrEmpty(settings.ConnectionString))
-                throw new ArgumentNullException("Redis Connection string is not configured");
+                throw new ArgumentNullException($"Redis {nameof(CacheSettings)} is not configured");
 
             //Redis Configuration
             services.AddStackExchangeRedisCache(options => { options.Configuration = settings.ConnectionString; });
@@ -64,15 +66,20 @@ namespace Basket.API.Extensions
 
         public static void ConfigureMassTransit(this IServiceCollection services)
         {
-            var settings = services.GetOptions<EventBusSettings>("EventBusSettings");
+            var settings = services.GetOptions<EventBusSettings>(nameof(EventBusSettings));
             if (settings == null || string.IsNullOrEmpty(settings.HostAddress))
-                throw new ArgumentNullException("EventBusSettings is not configured.");
+                throw new ArgumentNullException($"{nameof(EventBusSettings)} is not configured.");
 
             var mqConnection = new Uri(settings.HostAddress);
             services.TryAddSingleton(KebabCaseEndpointNameFormatter.Instance);
             services.AddMassTransit(config =>
             {
-                config.UsingRabbitMq((ctx, cfg) => { cfg.Host(mqConnection); });
+                config.UsingRabbitMq((
+                    ctx,
+                    cfg) =>
+                {
+                    cfg.Host(mqConnection);
+                });
 
                 // Publish submit order message
                 config.AddRequestClient<IBasketCheckoutEvent>();

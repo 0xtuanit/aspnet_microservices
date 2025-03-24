@@ -21,7 +21,7 @@ public static class ConfigureServices
     {
         var databaseSettings = services.GetOptions<DatabaseSettings>(nameof(DatabaseSettings));
         if (databaseSettings == null || string.IsNullOrEmpty(databaseSettings.ConnectionString))
-            throw new ArgumentNullException("ConnectionString is not configured.");
+            throw new ArgumentNullException($"{nameof(DatabaseSettings)} is not configured.");
 
         services.AddDbContext<OrderContext>(options =>
         {

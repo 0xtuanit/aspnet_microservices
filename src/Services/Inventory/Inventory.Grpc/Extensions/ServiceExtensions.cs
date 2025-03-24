@@ -22,7 +22,7 @@ public static class ServiceExtensions
     {
         var settings = services.GetOptions<MongoDbSettings>(nameof(MongoDbSettings));
         if (settings == null || string.IsNullOrEmpty(settings.ConnectionString))
-            throw new ArgumentNullException("DatabaseSettings is not configured.");
+            throw new ArgumentNullException($"{nameof(MongoDbSettings)} is not configured.");
 
         var databaseName = settings.DatabaseName;
         var mongoDbConnectionString = settings.ConnectionString + "/" + databaseName + "?authSource=admin";

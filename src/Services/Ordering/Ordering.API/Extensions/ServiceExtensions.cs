@@ -25,9 +25,9 @@ public static class ServiceExtensions
 
     public static void ConfigureMassTransit(this IServiceCollection services)
     {
-        var settings = services.GetOptions<EventBusSettings>("EventBusSettings");
+        var settings = services.GetOptions<EventBusSettings>(nameof(EventBusSettings));
         if (settings == null || string.IsNullOrEmpty(settings.HostAddress))
-            throw new ArgumentNullException("EventBusSetting is not configured.");
+            throw new ArgumentNullException($"{nameof(EventBusSettings)} is not configured.");
 
         var mqConnection = new Uri(settings.HostAddress);
         services.TryAddSingleton(KebabCaseEndpointNameFormatter.Instance);

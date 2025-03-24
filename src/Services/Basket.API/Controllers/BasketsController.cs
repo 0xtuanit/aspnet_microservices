@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Net;
 using AutoMapper;
 using Basket.API.GrpcServices;
+using Basket.API.Services.Interfaces;
 using EventBus.Messages.IntegrationEvents.Events;
 using MassTransit;
 
@@ -19,13 +20,15 @@ public class BasketsController : ControllerBase
     private readonly IPublishEndpoint _publishEndpoint;
     private readonly IMapper _mapper;
     private readonly StockItemGrpcService _stockItemGrpcService;
+    private readonly IEmailTemplateService _emailTemplateService;
 
     public BasketsController(IBasketRepository basketRepository, IPublishEndpoint publishEndpoint, IMapper mapper,
-        StockItemGrpcService stockItemGrpcService)
+        StockItemGrpcService stockItemGrpcService, IEmailTemplateService emailTemplateService)
     {
         _basketRepository = basketRepository ?? throw new ArgumentNullException(nameof(basketRepository));
         _publishEndpoint = publishEndpoint ?? throw new ArgumentNullException(nameof(publishEndpoint));
         _stockItemGrpcService = stockItemGrpcService ?? throw new ArgumentNullException(nameof(stockItemGrpcService));
+        _emailTemplateService = emailTemplateService ?? throw new ArgumentNullException(nameof(emailTemplateService));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
@@ -49,7 +52,7 @@ public class BasketsController : ControllerBase
         }
 
         var options = new DistributedCacheEntryOptions().SetAbsoluteExpiration(DateTime.UtcNow.AddHours(10));
-            // .SetSlidingExpiration(TimeSpan.FromMinutes(5));
+        // .SetSlidingExpiration(TimeSpan.FromMinutes(5));
 
         var result = await _basketRepository.UpdateBasket(cart, options);
         return Ok(result);
@@ -84,5 +87,19 @@ public class BasketsController : ControllerBase
         }
 
         return Accepted();
+    }
+
+    [HttpPost("[action]", Name = "SendEmailReminder")]
+    public ContentResult SendEmailReminder()
+    {
+        var emailTemplate = _emailTemplateService
+            .GenerateReminderCheckoutOrderEmail("0xthomasit@gmail.com", "test");
+        var result = new ContentResult
+        {
+            Content = emailTemplate,
+            ContentType = "text/html"
+        };
+
+        return result;
     }
 }

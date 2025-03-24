@@ -48,7 +48,7 @@ public static class ServiceExtensions
     {
         var databaseSettings = services.GetOptions<DatabaseSettings>(nameof(DatabaseSettings));
         if (databaseSettings == null || string.IsNullOrEmpty(databaseSettings.ConnectionString))
-            throw new ArgumentNullException("ConnectionString is not configured.");
+            throw new ArgumentNullException($"{nameof(DatabaseSettings)} is not configured.");
 
         var builder = new MySqlConnectionStringBuilder(databaseSettings.ConnectionString);
         services.AddDbContext<ProductContext>(m => m.UseMySql(builder.ConnectionString,

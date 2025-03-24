@@ -18,9 +18,9 @@ public static class HangfireExtensions
 {
     public static IServiceCollection AddIonHangfireService(this IServiceCollection services)
     {
-        var settings = services.GetOptions<HangfireSettings>("HangfireSettings");
+        var settings = services.GetOptions<HangfireSettings>(nameof(HangfireSettings));
         if (settings.Storage == null || string.IsNullOrEmpty(settings.Storage.ConnectionString))
-            throw new Exception("HangfireSettings is not configured properly!");
+            throw new Exception($"{nameof(HangfireSettings)} is not configured properly!");
 
         services.ConfigureHangfireServices(settings);
         services.AddHangfireServer(serverOptions => { serverOptions.ServerName = settings.ServerName; });
