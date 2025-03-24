@@ -1,6 +1,5 @@
 using Basket.API;
 using Basket.API.Extensions;
-using Common.Logging;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -21,6 +20,7 @@ try
         cfg => cfg.AddProfile(new MappingProfile()));
 
     builder.Services.ConfigureServices();
+    builder.Services.ConfigureHttpClientService();
     builder.Services.ConfigureRedis(builder.Configuration);
     builder.Services.ConfigureGrpcServices();
     builder.Services.Configure<RouteOptions>(options

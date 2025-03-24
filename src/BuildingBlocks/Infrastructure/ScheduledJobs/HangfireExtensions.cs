@@ -79,7 +79,6 @@ public static class HangfireExtensions
                 services.AddHangfire(x => x.UsePostgreSqlStorage(
                     options => options.UseNpgsqlConnection(settings.Storage.ConnectionString)));
                 break;
-
             case "mssql":
 
                 break;

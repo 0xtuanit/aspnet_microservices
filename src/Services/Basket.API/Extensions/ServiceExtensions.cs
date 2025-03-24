@@ -32,6 +32,10 @@ namespace Basket.API.Extensions
                 .Get<GrpcSettings>();
             if (grpcSettings != null) services.AddSingleton(grpcSettings);
 
+            var backgroundJobSettings = configuration.GetSection(nameof(BackgroundJobSettings))
+                .Get<BackgroundJobSettings>();
+            if (backgroundJobSettings != null) services.AddSingleton(backgroundJobSettings);
+
             return services;
         }
 
@@ -50,6 +54,11 @@ namespace Basket.API.Extensions
 
             //Redis Configuration
             services.AddStackExchangeRedisCache(options => { options.Configuration = settings.ConnectionString; });
+        }
+
+        public static void ConfigureHttpClientService(this IServiceCollection services)
+        {
+            services.AddHttpClient<BackgroundJobHttpService>();
         }
 
         public static IServiceCollection ConfigureGrpcServices(this IServiceCollection services)

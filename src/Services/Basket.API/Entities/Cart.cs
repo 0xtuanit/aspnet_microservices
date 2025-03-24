@@ -3,6 +3,9 @@
     public class Cart
     {
         public string? Username { get; set; }
+
+        public string? EmailAddress { get; set; } // temporarily put it here
+
         public List<CartItem> Items { get; set; } = [];
 
         public Cart()

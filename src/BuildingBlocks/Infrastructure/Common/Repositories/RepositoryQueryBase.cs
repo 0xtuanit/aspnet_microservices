@@ -40,7 +40,7 @@ public class RepositoryQueryBase<T, TK, TContext> : IRepositoryQueryBase<T, TK, 
         var items = FindByCondition(expression, trackChanges);
         items = includeProperties.Aggregate(items,
             (current, includeProperty)
-                => current.Include<T, object>(includeProperty));
+                => current!.Include<T, object>(includeProperty));
 
         return items;
     }

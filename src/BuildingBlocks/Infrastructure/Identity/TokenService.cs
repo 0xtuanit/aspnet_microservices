@@ -26,7 +26,7 @@ public class TokenService : ITokenService
 
     private string GenerateJwt() => GenerateEncryptedToken(GetSigningCredentials());
 
-    private string GenerateEncryptedToken(SigningCredentials signingCredentials)
+    private string GenerateEncryptedToken(SigningCredentials? signingCredentials)
     {
         var claims = new[]
         {
@@ -41,9 +41,14 @@ public class TokenService : ITokenService
         return tokenHandler.WriteToken(token);
     }
 
-    private SigningCredentials GetSigningCredentials()
+    private SigningCredentials? GetSigningCredentials()
     {
-        byte[] secret = Encoding.UTF8.GetBytes(_jwtSettings.Key);
-        return new SigningCredentials(new SymmetricSecurityKey(secret), SecurityAlgorithms.HmacSha256);
+        if (_jwtSettings.Key != null)
+        {
+            byte[] secret = Encoding.UTF8.GetBytes(_jwtSettings.Key);
+            return new SigningCredentials(new SymmetricSecurityKey(secret), SecurityAlgorithms.HmacSha256);
+        }
+
+        return null;
     }
 }

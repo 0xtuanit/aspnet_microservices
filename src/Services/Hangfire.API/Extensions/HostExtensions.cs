@@ -21,14 +21,14 @@ public static class HostExtensions
     {
         var configDashboard = configuration.GetSection("HangfireSettings:Dashboard").Get<DashboardOptions>();
         var hangfireSettings = configuration.GetSection("HangfireSettings").Get<HangfireSettings>();
-        var hangfireRoute = hangfireSettings.Route;
+        var hangfireRoute = hangfireSettings?.Route;
 
         app.UseHangfireDashboard(hangfireRoute, new DashboardOptions
         {
             // Authorization = new[] { new HangfireAuthorizationFilter() },
-            DashboardTitle = configDashboard.DashboardTitle,
-            StatsPollingInterval = configDashboard.StatsPollingInterval,
-            AppPath = configDashboard.AppPath,
+            DashboardTitle = configDashboard?.DashboardTitle,
+            StatsPollingInterval = configDashboard?.StatsPollingInterval ?? 0,
+            AppPath = configDashboard?.AppPath,
             IgnoreAntiforgeryToken = true
         });
 
