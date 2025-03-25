@@ -17,6 +17,9 @@ public class OrderRepository : RepositoryBase<Order, long, OrderContext>, IOrder
         await FindByCondition(o => o.Username != null && o.Username.Equals(username))
             .ToListAsync();
 
+    public Task<Order?> GetOrderByDocumentNo(string documentNo)
+        => FindByCondition(x => x.DocumentNo.ToString().Equals(documentNo)).FirstOrDefaultAsync();
+
     public void CreateOrder(Order order) => Create(order);
 
     public async Task<Order> UpdateOrderAsync(Order order)

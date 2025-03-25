@@ -1,12 +1,8 @@
-using AutoMapper;
-using Ordering.Application.Common.Mappings;
-using Ordering.Application.Features.V1.Orders;
-using Ordering.Domain.Entities;
 using Shared.Enums.Order;
 
-namespace Ordering.Application.Common.Models;
+namespace Shared.DTOs.Order;
 
-public class OrderDto : IMapFrom<Order>, IMapFrom<UpdateOrderCommand>
+public class OrderDto
 {
     public long Id { get; set; }
     public string? DocumentNo { get; set; }
@@ -17,14 +13,9 @@ public class OrderDto : IMapFrom<Order>, IMapFrom<UpdateOrderCommand>
     public string? LastName { get; set; }
     public string? EmailAddress { get; set; }
 
-    // Address
+    // Addresses
     public string? ShippingAddress { get; set; }
     public string? InvoiceAddress { get; set; }
 
     public EOrderStatus? Status { get; set; }
-
-    public void Mapping(Profile profile)
-    {
-        profile.CreateMap<Order, OrderDto>().ReverseMap();
-    }
 }
