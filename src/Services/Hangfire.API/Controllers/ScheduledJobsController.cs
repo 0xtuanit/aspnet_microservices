@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Hangfire.API.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Shared.DTOs.ScheduledJob;
@@ -8,18 +9,26 @@ namespace Hangfire.API.Controllers;
 [Route("api/scheduled-jobs")]
 public class ScheduledJobsController : ControllerBase
 {
-    private readonly IBackgroundJobService _backgroundJobService;
+    private readonly IBackgroundJobService _jobService;
 
-    public ScheduledJobsController(IBackgroundJobService backgroundJobService)
+    public ScheduledJobsController(IBackgroundJobService jobService)
     {
-        _backgroundJobService = backgroundJobService;
+        _jobService = jobService;
     }
 
     [HttpPost]
     [Route("send-email-reminder-checkout-order")]
     public IActionResult SendReminderCheckoutOrderEmail([FromBody] ReminderCheckoutOrderDto model)
     {
-        var jobId = _backgroundJobService.SendEmailContent(model.email, model.subject, model.emailContent, model.enqueueAt);
+        var jobId = _jobService.SendEmailContent(model.Email!, model.Subject!, model.EmailContent!, model.EnqueueAt);
         return Ok(jobId);
+    }
+
+    [HttpDelete]
+    [Route("delete/jobId/{id}")]
+    public IActionResult DeleteJobId([Required] string id)
+    {
+        var result = _jobService.ScheduledJobService.Delete(id);
+        return Ok(result);
     }
 }

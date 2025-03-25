@@ -39,7 +39,7 @@ namespace Basket.API.Repositories
 
         public async Task<Cart?> UpdateBasket(Cart cart, DistributedCacheEntryOptions? options = null)
         {
-            if (cart.Username == null) return null;
+            DeleteReminderCheckoutOrder(cart.Username);
 
             _logger.Information($"BEGIN: UpdateBasket for {cart.Username}");
 
@@ -66,9 +66,9 @@ namespace Basket.API.Repositories
         {
             var emailTemplate = _emailTemplateService.GenerateReminderCheckoutOrderEmail(cart.Username);
             var model = new ReminderCheckoutOrderDto(cart.EmailAddress, "Reminder checkout", emailTemplate,
-                DateTimeOffset.UtcNow.AddHours(24));
+                DateTimeOffset.UtcNow.AddSeconds(30));
 
-            const string uri = "/api/scheduled-jobs/send-email-reminder-checkout-order";
+            var uri = $"{_backgroundJobHttp.ScheduledJobUrl}/send-email-reminder-checkout-order";
             var response = await _backgroundJobHttp.Client.PostAsJson(uri, model);
             if (response.EnsureSuccessStatusCode().IsSuccessStatusCode)
             {
@@ -81,8 +81,20 @@ namespace Basket.API.Repositories
             }
         }
 
+        private async Task DeleteReminderCheckoutOrder(string username)
+        {
+            var cart = await GetBasketByUsername(username);
+            if (cart == null || string.IsNullOrEmpty(cart.JobId)) return;
+
+            var jobId = cart.JobId;
+            var uri = $"{_backgroundJobHttp.ScheduledJobUrl}/delete/jobId/{jobId}";
+            _backgroundJobHttp.Client.DeleteAsync(uri);
+            _logger.Information($"DeleteReminderCheckoutOrder:Deleted JobId: {jobId}");
+        }
+
         public async Task<bool> DeleteBasketFromUsername(string username)
         {
+            DeleteReminderCheckoutOrder(username);
             try
             {
                 _logger.Information($"BEGIN: DeleteBasketFromUserName {username}");

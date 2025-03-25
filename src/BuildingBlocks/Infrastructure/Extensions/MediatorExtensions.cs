@@ -1,5 +1,4 @@
 using Contracts.Common.Events;
-using Infrastructure.Common;
 using MediatR;
 using Serilog;
 

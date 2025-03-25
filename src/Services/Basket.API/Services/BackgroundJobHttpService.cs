@@ -6,6 +6,8 @@ public class BackgroundJobHttpService
 {
     public HttpClient Client { get; }
 
+    public string ScheduledJobUrl { get; }
+
     public BackgroundJobHttpService(
         HttpClient client,
         BackgroundJobSettings settings)
@@ -15,5 +17,7 @@ public class BackgroundJobHttpService
         client.DefaultRequestHeaders.Add("Accept", "application/json");
 
         Client = client;
+
+        ScheduledJobUrl = settings.ScheduledJobUrl;
     }
 }

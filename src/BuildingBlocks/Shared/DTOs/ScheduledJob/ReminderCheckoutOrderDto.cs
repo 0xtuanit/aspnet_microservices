@@ -1,7 +1,7 @@
 namespace Shared.DTOs.ScheduledJob;
 
 public record ReminderCheckoutOrderDto(
-    string email,
-    string subject,
-    string emailContent,
-    DateTimeOffset enqueueAt);
+    string? Email,
+    string? Subject,
+    string? EmailContent,
+    DateTimeOffset EnqueueAt);
