@@ -25,7 +25,7 @@ public static class HostExtensions
 
         app.UseHangfireDashboard(hangfireRoute, new DashboardOptions
         {
-            // Authorization = new[] { new HangfireAuthorizationFilter() },
+            Authorization = new[] { new AuthorizationFilter() },
             DashboardTitle = configDashboard?.DashboardTitle,
             StatsPollingInterval = configDashboard?.StatsPollingInterval ?? 0,
             AppPath = configDashboard?.AppPath,
