@@ -74,6 +74,20 @@ public class InventoryController : ControllerBase
     }
 
     /// <summary>
+    /// api/inventory/sales/{itemNo}
+    /// </summary>
+    /// <returns></returns>
+    [HttpPost("sales/{itemNo}", Name = "SalesOrder")]
+    [ProducesResponseType(typeof(InventoryEntryDto), (int)HttpStatusCode.OK)]
+    public async Task<ActionResult<InventoryEntryDto>> SalesOrder(
+        [Required] string itemNo,
+        [FromBody] SalesProductDto model)
+    {
+        var result = await _inventoryService.SalesItemAsync(itemNo, model);
+        return Ok(result);
+    }
+
+    /// <summary>
     /// api/inventory/{id}
     /// </summary>
     /// <returns></returns>
@@ -86,6 +100,19 @@ public class InventoryController : ControllerBase
         if (entity == null) return NotFound();
 
         await _inventoryService.DeleteAsync(id);
+        return NoContent();
+    }
+
+    /// <summary>
+    /// api/inventory/document-no/{documentNo}
+    /// </summary>
+    /// <returns></returns>
+    [HttpDelete("document-no/{documentNo}", Name = "DeleteByDocumentNo")]
+    [ProducesResponseType(typeof(InventoryEntryDto), (int)HttpStatusCode.OK)]
+    public async Task<ActionResult<InventoryEntryDto>> DeleteByDocumentNo(
+        [Required] string documentNo)
+    {
+        await _inventoryService.DeleteByDocumentNoAsync(documentNo);
         return NoContent();
     }
 }

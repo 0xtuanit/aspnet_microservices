@@ -41,7 +41,7 @@ public class WelcomeController : ControllerBase
     [Route("[action]")]
     public IActionResult WelcomeAt()
     {
-        var enqueueAt = DateTimeOffset.UtcNow.AddMinutes(1).AddSeconds(10);
+        var enqueueAt = DateTimeOffset.UtcNow.AddDays(1);
         var jobId = _scheduledJobService.Schedule(() => ResponseWelcome("Welcome to Hangfire API"),
             enqueueAt);
 

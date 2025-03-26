@@ -31,8 +31,8 @@ public class BasketsController : ControllerBase
     }
 
     [HttpGet("{username}", Name = "GetBasket")]
-    [ProducesResponseType(typeof(CartDto), (int)HttpStatusCode.OK)]
-    public async Task<ActionResult<CartDto>> GetBasketByUsername([Required] string username)
+    [ProducesResponseType(typeof(Cart), (int)HttpStatusCode.OK)]
+    public async Task<ActionResult<Cart>> GetBasket([Required] string username)
     {
         var cart = await _basketRepository.GetBasketByUsername(username);
         var result = _mapper.Map<CartDto>(cart) ?? new CartDto(username);
@@ -41,7 +41,7 @@ public class BasketsController : ControllerBase
     }
 
     [HttpPost(Name = "UpdateBasket")]
-    [ProducesResponseType(typeof(CartDto), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(Cart), (int)HttpStatusCode.OK)]
     public async Task<ActionResult<CartDto>> UpdateBasket([FromBody] CartDto model)
     {
         // Communicate with Inventory.Grpc and check quantity available of products
@@ -51,7 +51,8 @@ public class BasketsController : ControllerBase
             item.SetAvailableQuantity(stock.Quantity);
         }
 
-        var options = new DistributedCacheEntryOptions().SetAbsoluteExpiration(DateTime.UtcNow.AddHours(10));
+        var options = new DistributedCacheEntryOptions()
+            .SetAbsoluteExpiration(DateTime.UtcNow.AddHours(10));
         // .SetSlidingExpiration(TimeSpan.FromMinutes(5));
 
         var cart = _mapper.Map<Cart>(model);
@@ -69,25 +70,22 @@ public class BasketsController : ControllerBase
         return Ok(result);
     }
 
-    [Route("[action]")]
+    [Route("[action]/{username}")]
     [HttpPost]
     [ProducesResponseType((int)HttpStatusCode.Accepted)]
-    [ProducesResponseType((int)HttpStatusCode.NotFound)]
-    public async Task<IActionResult> Checkout([FromBody] BasketCheckout basketCheckout)
+    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    public async Task<IActionResult> Checkout([Required] string username, [FromBody] BasketCheckout basketCheckout)
     {
-        if (basketCheckout.Username != null)
-        {
-            var basket = await _basketRepository.GetBasketByUsername(basketCheckout.Username);
-            if (basket == null) return NotFound();
+        var basket = await _basketRepository.GetBasketByUsername(basketCheckout.Username);
+        if (basket == null || !basket.Items.Any()) return NotFound();
 
-            // Publish checkout event to Eventbus Message
-            var eventMessage = _mapper.Map<BasketCheckoutEvent>(basketCheckout);
-            eventMessage.TotalPrice = basket.TotalPrice;
-            await _publishEndpoint.Publish(eventMessage);
+        // Publish checkout event to Eventbus Message
+        var eventMessage = _mapper.Map<BasketCheckoutEvent>(basketCheckout);
+        eventMessage.TotalPrice = basket.TotalPrice;
+        await _publishEndpoint.Publish(eventMessage);
 
-            // Remove the basket
-            await _basketRepository.DeleteBasketFromUsername(basketCheckout.Username);
-        }
+        // Remove the basket
+        await _basketRepository.DeleteBasketFromUsername(basketCheckout.Username);
 
         return Accepted();
     }
