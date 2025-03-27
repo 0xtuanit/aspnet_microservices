@@ -1,18 +1,20 @@
+using Common.Logging;
 using Hangfire.API.Extensions;
 using Infrastructure.ScheduledJobs;
 using Serilog;
 
-Log.Logger = new LoggerConfiguration()
-    .WriteTo.Console()
-    .CreateBootstrapLogger();
+// Log.Logger = new LoggerConfiguration()
+//     .WriteTo.Console()
+//     .CreateBootstrapLogger();
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Host.UseSerilog(Serilogger.Configure);
 
 Log.Information($"Start {builder.Environment.ApplicationName} up");
 
 try
 {
-    builder.Host.AddAppConfigurations();
+    builder.Configuration.AddAppConfigurations(builder.Environment);
     // Add services to the container.
     builder.Services.AddConfigurationSettings(builder.Configuration);
     builder.Services.AddControllers();

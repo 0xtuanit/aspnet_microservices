@@ -7,7 +7,7 @@ namespace Common.Logging
     {
         public static Action<HostBuilderContext, LoggerConfiguration> Configure => (context, configuration) =>
         {
-            var applicationName = context.HostingEnvironment.ApplicationName?.ToLower().Replace(".", "-");
+            var applicationName = context.HostingEnvironment.ApplicationName.ToLower().Replace(".", "-");
             var environmentName = context.HostingEnvironment.EnvironmentName ?? "Development";
 
             configuration

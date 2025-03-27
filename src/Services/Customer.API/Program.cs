@@ -1,3 +1,4 @@
+using Common.Logging;
 using Customer.API;
 using Customer.API.Controllers;
 using Customer.API.Extensions;
@@ -6,17 +7,18 @@ using Infrastructure.Middlewares;
 using Infrastructure.ScheduledJobs;
 using Serilog;
 
-Log.Logger = new LoggerConfiguration()
-    .WriteTo.Console()
-    .CreateBootstrapLogger();
+// Log.Logger = new LoggerConfiguration()
+//     .WriteTo.Console()
+//     .CreateBootstrapLogger();
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Host.UseSerilog(Serilogger.Configure);
 
 Log.Information($"Start {builder.Environment.ApplicationName} up");
 
 try
 {
-    builder.Host.AddAppConfigurations();
+    builder.Configuration.AddAppConfigurations(builder.Environment);
     // Add services to the container.
     builder.Services.AddConfigurationSettings(builder.Configuration);
     builder.Services.AddControllers();
@@ -70,7 +72,7 @@ try
 }
 catch (Exception ex)
 {
-    string type = ex.GetType().Name;
+    var type = ex.GetType().Name;
     if (type.Equals("StopTheHostException", StringComparison.Ordinal)) throw;
 
     Log.Fatal(ex, $"Unhandled exception: {ex.Message}");

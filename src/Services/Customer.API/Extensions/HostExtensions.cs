@@ -7,15 +7,11 @@ namespace Customer.API.Extensions;
 
 public static class HostExtensions
 {
-    internal static void AddAppConfigurations(this ConfigureHostBuilder host)
+    internal static void AddAppConfigurations(this ConfigurationManager config, IWebHostEnvironment env)
     {
-        host.ConfigureAppConfiguration((context, config) =>
-        {
-            var env = context.HostingEnvironment;
-            config.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
-                .AddEnvironmentVariables();
-        }).UseSerilog(Serilogger.Configure);
+        config.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
+            .AddEnvironmentVariables();
     }
 
     internal static IApplicationBuilder UseHangfireDashboard(this IApplicationBuilder app, IConfiguration configuration)

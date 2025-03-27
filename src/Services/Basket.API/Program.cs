@@ -1,19 +1,21 @@
 using Basket.API;
 using Basket.API.Extensions;
+using Common.Logging;
 using Serilog;
 
-Log.Logger = new LoggerConfiguration()
-    .WriteTo.Console()
-    .CreateBootstrapLogger();
+// Log.Logger = new LoggerConfiguration()
+//     .WriteTo.Console()
+//     .CreateBootstrapLogger();
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Host.UseSerilog(Serilogger.Configure);
 
 Log.Information($"Start {builder.Environment.ApplicationName} up");
 
 try
 {
     // Add services to the container.
-    builder.Host.AddAppConfigurations();
+    builder.Configuration.AddAppConfigurations(builder.Environment);
 
     builder.Services.AddConfigurationSettings(builder.Configuration);
     builder.Services.AddAutoMapper(
@@ -54,7 +56,7 @@ try
 }
 catch (Exception ex)
 {
-    string type = ex.GetType().Name;
+    var type = ex.GetType().Name;
     if (type.Equals("StopTheHostException", StringComparison.Ordinal)) throw;
 
     Log.Fatal(ex, $"Unhandled exception: {ex.Message}");
