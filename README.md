@@ -1,10 +1,21 @@
-## ASP.NET-Core Microservices:
+## Micro-services with ASP.NET Core
 
 ## Prepare environment:
 
 * Install dotnet core version in file `global.json`
 * IDE: Visual Studio 2022+, Rider, Visual Studio Code
 * Docker Desktop
+
+## Architecture overview:
+- Introduction:
+    - The project is Micro-services based architecture where each separate service can use different technologies.</br>
+      E.g. Product uses MySQL, Customer uses PostgresQL, Inventory uses MongoDB and so on.
+    - By the end of the day, these separate services can get connected and talked to each other though they use different technologies. So, together they will get a full flow of features completed for the whole system.
+-  Screenshot:</br>
+    <p align="center">
+      <img width="700" height="400" alt="Architecture" src="https://github.com/user-attachments/assets/0e7ca967-ace4-41e7-8af3-a8665588c599" />
+    </p>
+
 
 ## Warning:
 
