@@ -12,15 +12,16 @@ public class BasketHttpRepository : IBasketHttpRepository
         _client = client;
     }
 
-    public async Task<CartDto?> GetBasket(string username)
+    public async Task<CartDto?> GetBasket(string? username)
     {
         var cart = await _client.GetFromJsonAsync<CartDto>($"baskets/{username}");
         if (cart == null || !cart.Items.Any()) return null;
         return cart;
     }
 
-    public Task<bool> DeleteBasket(string username)
+    public async Task<bool> DeleteBasket(string? username)
     {
-        throw new NotImplementedException();
+        var result = false;
+        return false;
     }
 }

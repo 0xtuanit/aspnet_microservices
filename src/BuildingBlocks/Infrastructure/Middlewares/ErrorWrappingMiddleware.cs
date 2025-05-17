@@ -8,8 +8,8 @@ namespace Infrastructure.Middlewares;
 
 public class ErrorWrappingMiddleware
 {
-    private readonly ILogger _logger;
     private readonly RequestDelegate _next;
+    private readonly ILogger _logger;
 
     public ErrorWrappingMiddleware(RequestDelegate next, ILogger logger)
     {

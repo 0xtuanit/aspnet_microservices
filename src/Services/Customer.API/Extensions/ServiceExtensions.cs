@@ -44,7 +44,7 @@ public static class ServiceExtensions
         services.AddScoped<ICustomerRepository, CustomerRepository>()
             .AddScoped<ICustomerService, CustomerService>()
             .AddScoped(serviceType: typeof(IUnitOfWork<>), implementationType: typeof(UnitOfWork<>))
-            .AddScoped(typeof(IRepositoryQueryBase<,,>), typeof(RepositoryQueryBase<,,>))
-            .AddTransient<ErrorWrappingMiddleware>();
+            .AddScoped(typeof(IRepositoryQueryBase<,,>), typeof(RepositoryQueryBase<,,>));
+        // .AddTransient<ErrorWrappingMiddleware>();
     }
 }

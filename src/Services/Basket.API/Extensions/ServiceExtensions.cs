@@ -42,9 +42,8 @@ namespace Basket.API.Extensions
         public static IServiceCollection ConfigureServices(this IServiceCollection services) =>
             services.AddScoped<IBasketRepository, BasketRepository>()
                 .AddTransient<ISerializeService, SerializeService>()
-                .AddTransient<IEmailTemplateService, BasketEmailTemplateService>()
-                .AddTransient<ErrorWrappingMiddleware>();
-
+                .AddTransient<IEmailTemplateService, BasketEmailTemplateService>();
+        // .AddTransient<ErrorWrappingMiddleware>();
 
         public static void ConfigureRedis(this IServiceCollection services, IConfiguration configuration)
         {

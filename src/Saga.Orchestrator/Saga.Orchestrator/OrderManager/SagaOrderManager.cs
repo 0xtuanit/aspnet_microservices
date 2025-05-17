@@ -4,6 +4,7 @@ using Saga.Orchestrator.HttpRepository.Interfaces;
 using Shared.DTOs.Basket;
 using Shared.DTOs.Inventory;
 using Shared.DTOs.Order;
+using ILogger = Serilog.ILogger;
 
 namespace Saga.Orchestrator.OrderManager;
 
@@ -82,7 +83,7 @@ public class SagaOrderManager : ISagaOrderManager<BasketCheckoutDto, OrderRespon
                 {
                     RollBackOrder(input.Username, inventoryDocumentNo, orderId);
                     return EOrderTransactionState.InventoryRollback;
-                });
+                }).OnEntry(() => orderStateMachine.Fire(EOrderAction.DeleteInventory));
 
         orderStateMachine.Fire(EOrderAction.GetBasket);
 
@@ -91,6 +92,25 @@ public class SagaOrderManager : ISagaOrderManager<BasketCheckoutDto, OrderRespon
 
     public OrderResponse RollBackOrder(string? username, string? documentNo, long orderId)
     {
-        return new OrderResponse(false);
+        var orderStateMachine =
+            new Stateless.StateMachine<EOrderTransactionState, EOrderAction>(EOrderTransactionState.RollbackInventory);
+
+        orderStateMachine.Configure(EOrderTransactionState.RollbackInventory)
+            .PermitDynamic(EOrderAction.DeleteInventory, () =>
+            {
+                _inventoryHttpRepository.DeleteOrderByDocumentNo(documentNo);
+                return EOrderTransactionState.InventoryRollback;
+            });
+
+        orderStateMachine.Configure(EOrderTransactionState.InventoryRollback)
+            .PermitDynamic(EOrderAction.DeleteOrder, () =>
+            {
+                var result = _orderHttpRepository.DeleteOrder(orderId).Result;
+                return result ? EOrderTransactionState.OrderDeleted : EOrderTransactionState.OrderDeletedFailed;
+            }).OnEntry(() => orderStateMachine.Fire(EOrderAction.DeleteOrder));
+
+        orderStateMachine.Fire(EOrderAction.DeleteInventory);
+
+        return new OrderResponse(orderStateMachine.State == EOrderTransactionState.InventoryRollback);
     }
 }

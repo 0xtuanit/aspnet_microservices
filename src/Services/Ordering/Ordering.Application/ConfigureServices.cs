@@ -15,6 +15,6 @@ public static class ConfigureServices
             .AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()))
             .AddTransient(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehaviour<,>))
             .AddTransient(typeof(IPipelineBehavior<,>), typeof(PerformanceBehaviour<,>))
-            .AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>))
-            .AddTransient<ErrorWrappingMiddleware>();
+            .AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
+    // .AddTransient<ErrorWrappingMiddleware>();
 }
