@@ -1,4 +1,5 @@
 using Common.Logging;
+using Infrastructure.Middlewares;
 using Ordering.API.Extensions;
 using Ordering.Application;
 using Ordering.Infrastructure;
@@ -48,6 +49,8 @@ try
         await orderContextSeed.InitialiseAsync();
         await orderContextSeed.SeedAsync();
     }
+
+    app.UseMiddleware<ErrorWrappingMiddleware>();
 
     // app.UseHttpsRedirection(); -> for Production only
     app.UseRouting();

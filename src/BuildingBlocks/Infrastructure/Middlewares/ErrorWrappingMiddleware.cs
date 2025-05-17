@@ -1,113 +1,69 @@
-using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
-using Infrastructure.Middlewares.Exceptions;
+using Infrastructure.Exceptions;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using Shared.SeedWork;
 
 namespace Infrastructure.Middlewares;
 
-public class ErrorWrappingMiddleware : IMiddleware
+public class ErrorWrappingMiddleware
 {
     private readonly ILogger _logger;
+    private readonly RequestDelegate _next;
 
-    public ErrorWrappingMiddleware(ILogger logger)
+    public ErrorWrappingMiddleware(RequestDelegate next, ILogger logger)
     {
+        _next = next;
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
-    public async Task InvokeAsync(HttpContext context, RequestDelegate next)
+    public async Task Invoke(HttpContext context)
     {
-        // var errorMsg = string.Empty;
+        var errorMsg = string.Empty;
         try
         {
-            await next(context);
+            await _next.Invoke(context);
+        }
+        catch (ValidationException ex)
+        {
+            _logger.Error(ex, ex.Message);
+            errorMsg = ex.Errors.FirstOrDefault().Value.FirstOrDefault();
+            context.Response.StatusCode = StatusCodes.Status406NotAcceptable;
         }
         catch (Exception ex)
         {
-            await HandleExceptionAsync(context, ex);
-        }
-    }
-
-    private async Task HandleExceptionAsync(HttpContext context, Exception exception,
-        CancellationToken cancellationToken = new())
-    {
-        _logger.Error("Error Message: {exceptionMessage}, Time of occurrence {time}",
-            exception.Message, DateTime.UtcNow);
-
-        //More log stuff        
-
-        // Handle the different exception types here
-        (string Detail, string Title, int StatusCode) details = exception switch
-        {
-            InternalServerException =>
-            (
-                exception.Message,
-                exception.GetType().Name,
-                context.Response.StatusCode = StatusCodes.Status500InternalServerError
-            ),
-            ValidationException =>
-            (
-                exception.Message,
-                exception.GetType().Name,
-                context.Response.StatusCode = StatusCodes.Status400BadRequest
-            ),
-            BadRequestException =>
-            (
-                exception.Message,
-                exception.GetType().Name,
-                context.Response.StatusCode = StatusCodes.Status400BadRequest
-            ),
-            NotFoundException =>
-            (
-                exception.Message,
-                exception.GetType().Name,
-                context.Response.StatusCode = StatusCodes.Status404NotFound
-            ),
-            _ =>
-            (
-                exception.Message,
-                exception.GetType().Name,
-                context.Response.StatusCode = StatusCodes.Status500InternalServerError
-            )
-        };
-
-        var problemDetails = new ProblemDetails
-        {
-            Title = details.Title,
-            Detail = details.Detail,
-            Status = details.StatusCode,
-            Instance = context.Request.Path
-        };
-
-        problemDetails.Extensions.Add("traceId", context.TraceIdentifier);
-
-        if (exception is ValidationException validationException)
-        {
-            problemDetails.Extensions.Add("ValidationErrors", validationException.ValidationResult.ErrorMessage);
+            _logger.Error(ex, ex.Message);
+            errorMsg = ex.Message;
+            context.Response.StatusCode = StatusCodes.Status500InternalServerError;
         }
 
-        context.Response.ContentType = "application/json";
-        context.Response.StatusCode = problemDetails.Status ?? 500;
+        if ((!context.Response.HasStarted && context.Response.StatusCode == StatusCodes.Status401Unauthorized) ||
+            context.Response.StatusCode == StatusCodes.Status403Forbidden)
+        {
+            context.Response.ContentType = "application/json";
 
-        // var errors = (string)problemDetails.Extensions["ValidationErrors"]!;
+            var response = new ApiErrorResult<bool>("Unauthorized");
 
-        var errorResponse = new ApiErrorResult<string>(problemDetails.Detail);
-        var errorList = new List<string>();
-        errorList.Add(problemDetails.Title);
+            var json = JsonSerializer.Serialize(response);
 
-        // foreach (var (k, v) in problemDetails.Extensions)
-        // {
-        //     errorList.Add(err.Value.ToString());
-        // }
+            await context.Response.WriteAsync(json);
+        }
 
-        errorResponse.Errors = errorList;
+        else if (!context.Response.HasStarted && context.Response.StatusCode != StatusCodes.Status204NoContent &&
+                 context.Response.StatusCode != StatusCodes.Status202Accepted &&
+                 context.Response.StatusCode != StatusCodes.Status200OK &&
+                 context.Response.ContentType != "text/html; charset=utf-8")
+        {
+            context.Response.ContentType = "application/json";
 
-        var serializedErrorResponse = JsonSerializer.Serialize(errorResponse);
+            if (errorMsg != null)
+            {
+                var response = new ApiErrorResult<bool>(errorMsg);
 
-        await context.Response.WriteAsync(serializedErrorResponse, cancellationToken: cancellationToken);
+                var json = JsonSerializer.Serialize(response);
 
-        // await context.Response.WriteAsJsonAsync(problemDetails, cancellationToken: cancellationToken);
+                await context.Response.WriteAsync(json);
+            }
+        }
     }
 }

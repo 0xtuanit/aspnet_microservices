@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="14.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.1"/>
+    <PackageReference Include="Stateless" Version="5.17.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="8.0.0" />
   </ItemGroup>
 
@@ -16,6 +17,10 @@
     <ProjectReference Include="..\..\BuildingBlocks\Common.Logging\Common.Logging.csproj" />
     <ProjectReference Include="..\..\BuildingBlocks\Infrastructure\Infrastructure.csproj" />
     <ProjectReference Include="..\..\BuildingBlocks\Shared\Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="OrderManager\" />
   </ItemGroup>
 
 </Project>
