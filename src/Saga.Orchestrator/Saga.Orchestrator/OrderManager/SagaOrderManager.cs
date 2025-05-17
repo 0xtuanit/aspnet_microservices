@@ -30,6 +30,7 @@ public class SagaOrderManager : ISagaOrderManager<BasketCheckoutDto, OrderRespon
     {
         var orderStateMachine =
             new Stateless.StateMachine<EOrderTransactionState, EOrderAction>(EOrderTransactionState.NotStarted);
+
         long orderId = -1;
         CartDto? cart = null;
         OrderDto? addedOrder = null;
@@ -87,7 +88,7 @@ public class SagaOrderManager : ISagaOrderManager<BasketCheckoutDto, OrderRespon
 
         orderStateMachine.Fire(EOrderAction.GetBasket);
 
-        return new OrderResponse(orderStateMachine.State == EOrderTransactionState.InventoryUpdated);
+        return new OrderResponse(orderStateMachine.State == EOrderTransactionState.BasketDeleted);
     }
 
     public OrderResponse RollBackOrder(string? username, string? documentNo, long orderId)
