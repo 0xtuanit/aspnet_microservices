@@ -31,10 +31,23 @@ namespace Basket.API.Repositories
         public async Task<Cart?> GetBasketByUsername(string username)
         {
             _logger.Information($"BEGIN: GetBasketByUserName {username}");
-            var basket = await _redisCacheService.GetStringAsync(username);
-            _logger.Information($"END: GetBasketByUserName {username}");
+            // var basket = await _redisCacheService.GetStringAsync(username);
+            // _logger.Information($"END: GetBasketByUserName {username}");
+            //
+            // return string.IsNullOrEmpty(basket) ? null : _serializeService.Deserialize<Cart>(basket);
 
-            return string.IsNullOrEmpty(basket) ? null : _serializeService.Deserialize<Cart>(basket);
+            /** For Getting TotalPrice information and Log it onto ElasticSearch **/
+            var basket = await _redisCacheService.GetStringAsync(username);
+            if (!string.IsNullOrEmpty(basket))
+            {
+                var result = _serializeService.Deserialize<Cart>(basket);
+                var totalPrice = result.TotalPrice;
+                _logger.Information("END: GetBasketByUserName {username} - Total Price: {totalPrice}", username,
+                    totalPrice);
+                return result;
+            }
+
+            return null;
         }
 
         public async Task<Cart?> UpdateBasket(Cart cart, DistributedCacheEntryOptions? options = null)
@@ -52,11 +65,12 @@ namespace Basket.API.Repositories
 
             try
             {
+                throw new Exception("Update basket failed by custom reason");
                 await TriggerSendEmailReminderCheckout(cart);
             }
             catch (Exception e)
             {
-                _logger.Error(e.Message);
+                _logger.Error($"UpdateBasket failed: {e.Message}");
             }
 
             return await GetBasketByUsername(cart.Username);
