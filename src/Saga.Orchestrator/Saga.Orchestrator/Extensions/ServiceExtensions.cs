@@ -1,4 +1,5 @@
-﻿using Contracts.Sagas.OrderManager;
+﻿using Common.Logging;
+using Contracts.Sagas.OrderManager;
 using Saga.Orchestrator.HttpRepository;
 using Saga.Orchestrator.HttpRepository.Interfaces;
 using Saga.Orchestrator.OrderManager;
@@ -12,7 +13,8 @@ namespace Saga.Orchestrator.Extensions
     {
         public static IServiceCollection ConfigureServices(this IServiceCollection services) =>
             services.AddTransient<ICheckoutSagaService, CheckoutSagaService>()
-                .AddTransient<ISagaOrderManager<BasketCheckoutDto, OrderResponse>, SagaOrderManager>();
+                .AddTransient<ISagaOrderManager<BasketCheckoutDto, OrderResponse>, SagaOrderManager>()
+                .AddTransient<LoggingDelegatingHandler>();
 
         public static IServiceCollection ConfigureHttpRepository(this IServiceCollection services) =>
             services.AddScoped<IOrderHttpRepository, OrderHttpRepository>()
@@ -29,7 +31,8 @@ namespace Saga.Orchestrator.Extensions
         private static void ConfigureOrderHttpClient(this IServiceCollection services)
         {
             services.AddHttpClient<IOrderHttpRepository, OrderHttpRepository>("OrdersAPI",
-                (sp, cl) => { cl.BaseAddress = new Uri("http://localhost:5005/api/v1/"); });
+                    (sp, cl) => { cl.BaseAddress = new Uri("http://localhost:5005/api/v1/"); })
+                .AddHttpMessageHandler<LoggingDelegatingHandler>();
             services.AddScoped(sp => sp.GetService<IHttpClientFactory>()
                 .CreateClient("OrdersAPI"));
         }
@@ -37,7 +40,8 @@ namespace Saga.Orchestrator.Extensions
         private static void ConfigureBasketHttpClient(this IServiceCollection services)
         {
             services.AddHttpClient<IBasketHttpRepository, BasketHttpRepository>("BasketsAPI",
-                (sp, cl) => { cl.BaseAddress = new Uri("http://localhost:5004/api/"); });
+                    (sp, cl) => { cl.BaseAddress = new Uri("http://localhost:5004/api/"); })
+                .AddHttpMessageHandler<LoggingDelegatingHandler>();
             services.AddScoped(sp => sp.GetService<IHttpClientFactory>()
                 .CreateClient("BasketsAPI"));
         }
@@ -45,7 +49,8 @@ namespace Saga.Orchestrator.Extensions
         private static void ConfigureInventoryHttpClient(this IServiceCollection services)
         {
             services.AddHttpClient<IInventoryHttpRepository, InventoryHttpRepository>("InventoryAPI",
-                (sp, cl) => { cl.BaseAddress = new Uri("http://localhost:5006/api/"); });
+                    (sp, cl) => { cl.BaseAddress = new Uri("http://localhost:5006/api/"); })
+                .AddHttpMessageHandler<LoggingDelegatingHandler>();
             services.AddScoped(sp => sp.GetService<IHttpClientFactory>()
                 .CreateClient("InventoryAPI"));
         }

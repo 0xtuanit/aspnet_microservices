@@ -44,6 +44,7 @@ namespace Basket.API.Repositories
                 var totalPrice = result.TotalPrice;
                 _logger.Information("END: GetBasketByUserName {username} - Total Price: {totalPrice}", username,
                     totalPrice);
+
                 return result;
             }
 
@@ -65,7 +66,7 @@ namespace Basket.API.Repositories
 
             try
             {
-                throw new Exception("Update basket failed by custom reason");
+                // throw new Exception("Update basket failed by custom reason");
                 await TriggerSendEmailReminderCheckout(cart);
             }
             catch (Exception e)
