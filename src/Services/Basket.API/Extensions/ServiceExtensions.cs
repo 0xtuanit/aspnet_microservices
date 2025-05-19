@@ -12,6 +12,7 @@ using Infrastructure.Policies;
 using Inventory.Grpc.Client;
 using MassTransit;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Shared.Configurations;
 
 namespace Basket.API.Extensions
@@ -99,6 +100,16 @@ namespace Basket.API.Extensions
                 // Publish submit order message
                 config.AddRequestClient<IBasketCheckoutEvent>();
             });
+        }
+
+        public static void ConfigureHealthChecks(this IServiceCollection services)
+        {
+            var cacheSettings = services.GetOptions<CacheSettings>(nameof(CacheSettings));
+            if (cacheSettings.ConnectionString != null)
+                services.AddHealthChecks()
+                    .AddRedis(cacheSettings.ConnectionString,
+                        name: "Redis Health",
+                        failureStatus: HealthStatus.Degraded);
         }
     }
 }

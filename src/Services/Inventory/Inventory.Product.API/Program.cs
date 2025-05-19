@@ -1,5 +1,7 @@
 using Common.Logging;
+using HealthChecks.UI.Client;
 using Inventory.Product.API.Extensions;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,9 +19,10 @@ try
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
-    builder.Services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
-    builder.Services.AddInfrastructureServices();
     builder.Services.ConfigureMongoDbClient();
+    builder.Services.AddInfrastructureServices();
+    builder.Services.ConfigureHealthChecks();
+    builder.Services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
 
     var app = builder.Build();
 
@@ -31,12 +34,21 @@ try
     }
 
     // app.UseHttpsRedirection();
-
+    app.UseRouting();
     app.UseAuthorization();
 
-    app.MapDefaultControllerRoute(); // Automatically adding Home index into Url
+    app.UseEndpoints(endpoints =>
+    {
+        endpoints.MapDefaultControllerRoute(); // Automatically adding Home index into Url
+        endpoints.MapHealthChecks("/hc", new HealthCheckOptions()
+        {
+            Predicate = _ => true,
+            ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+        });
+    });
 
-    app.MigrateDatabase().Run();
+    app.MigrateDatabase()
+        .Run();
 }
 catch (Exception ex)
 {

@@ -3,6 +3,7 @@ using Infrastructure.Common;
 using Infrastructure.Common.Repositories;
 using Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using MySqlConnector;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Product.API.Persistence;
@@ -38,6 +39,8 @@ public static class ServiceExtensions
         services.ConfigureProductDbContext(configuration);
         services.AddInfrastructureServices();
         services.AddAutoMapper(cfg => cfg.AddProfile(new MappingProfile()));
+        // services.AddJwtAuthentication();
+        services.ConfigureHealthChecks();
 
         return services;
     }
@@ -67,5 +70,15 @@ public static class ServiceExtensions
             .AddScoped(serviceType: typeof(IUnitOfWork<>), implementationType: typeof(UnitOfWork<>))
             .AddScoped<IProductRepository, ProductRepository>();
         // .AddTransient<ErrorWrappingMiddleware>();
+    }
+
+    private static void ConfigureHealthChecks(this IServiceCollection services)
+    {
+        var databaseSettings = services.GetOptions<DatabaseSettings>(nameof(DatabaseSettings));
+        services
+            .AddHealthChecks()
+            .AddMySql(databaseSettings.ConnectionString,
+                name: "MySql Health",
+                failureStatus: HealthStatus.Degraded);
     }
 }

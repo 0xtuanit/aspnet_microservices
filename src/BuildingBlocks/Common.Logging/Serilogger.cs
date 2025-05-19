@@ -19,7 +19,7 @@ namespace Common.Logging
                 .WriteTo.Debug()
                 .WriteTo.Console(outputTemplate:
                     "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}")
-                .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(elasticUri))
+                .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(elasticUri ?? ""))
                 {
                     IndexFormat = $"ionlogs-{applicationName}-{environmentName}-{DateTime.UtcNow:yyyy-MM}",
                     AutoRegisterTemplate = true,

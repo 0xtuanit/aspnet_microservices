@@ -1,6 +1,4 @@
-using Common.Logging;
 using Hangfire;
-using Serilog;
 using Shared.Configurations;
 
 namespace Customer.API.Extensions;

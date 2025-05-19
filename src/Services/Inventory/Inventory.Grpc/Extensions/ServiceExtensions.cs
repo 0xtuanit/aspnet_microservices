@@ -1,6 +1,8 @@
+using Grpc.HealthCheck;
 using Infrastructure.Extensions;
 using Inventory.Grpc.Repositories;
 using Inventory.Grpc.Repositories.Interfaces;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using MongoDB.Driver;
 using Shared.Configurations;
 
@@ -41,5 +43,19 @@ public static class ServiceExtensions
     public static void AddInfrastructureServices(this IServiceCollection services)
     {
         services.AddScoped<IInventoryRepository, InventoryRepository>();
+    }
+
+    public static void ConfigureHealthChecks(this IServiceCollection services)
+    {
+        var databaseSettings = services.GetOptions<MongoDbSettings>(nameof(MongoDbSettings));
+        services.AddSingleton<HealthServiceImpl>();
+        services.AddHostedService<StatusService>();
+        services
+            .AddSingleton(sp => new MongoClient(databaseSettings.ConnectionString))
+            .AddHealthChecks()
+            .AddMongoDb(
+                name: "Inventory MongoDb Health",
+                failureStatus: HealthStatus.Degraded)
+            .AddCheck("Inventory gRPC Health", () => HealthCheckResult.Healthy());
     }
 }

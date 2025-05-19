@@ -1,5 +1,7 @@
 using Common.Logging;
+using HealthChecks.UI.Client;
 using Infrastructure.Middlewares;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Ordering.API.Extensions;
 using Ordering.Application;
 using Ordering.Infrastructure;
@@ -21,6 +23,7 @@ try
     builder.Services.AddApplicationServices();
     builder.Services.AddInfrastructureServices(builder.Configuration);
     builder.Services.ConfigureMassTransit();
+    builder.Services.ConfigureHealthChecks();
 
     // builder.Services.AddScoped<IMessageProducer, RabbitMQProducer>();
     // builder.Services.AddScoped<ISerializeService, SerializeService>();
@@ -59,7 +62,17 @@ try
 
     app.MapControllers();
 
-    app.MapDefaultControllerRoute();
+    // app.MapDefaultControllerRoute();
+
+    app.UseEndpoints(endpoints =>
+    {
+        endpoints.MapHealthChecks("/hc", new HealthCheckOptions()
+        {
+            Predicate = _ => true,
+            ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+        });
+        endpoints.MapDefaultControllerRoute();
+    });
 
     app.Run();
 }

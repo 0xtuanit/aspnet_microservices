@@ -3,8 +3,10 @@ using Customer.API;
 using Customer.API.Controllers;
 using Customer.API.Extensions;
 using Customer.API.Persistence;
+using HealthChecks.UI.Client;
 using Infrastructure.Middlewares;
 using Infrastructure.ScheduledJobs;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Serilog;
 
 // Log.Logger = new LoggerConfiguration()
@@ -31,11 +33,12 @@ try
     builder.Services.ConfigureCustomerContext();
     builder.Services.AddInfrastructureServices();
     builder.Services.AddIonHangfireService();
+    builder.Services.ConfigureHealthChecks();
 
     var app = builder.Build();
 
     // Map URL following minimal API style
-    // app.MapGet("/", () => $"Welcome to {builder.Environment.ApplicationName}!");
+    app.MapGet("/", () => $"Welcome to {builder.Environment.ApplicationName}!");
 
     app.MapCustomersApi();
 
@@ -60,12 +63,22 @@ try
     app.UseMiddleware<ErrorWrappingMiddleware>();
 
     // app.UseHttpsRedirection(); //production only
-
+    app.UseRouting();
     app.UseAuthorization();
 
     app.UseHangfireDashboard(builder.Configuration);
 
-    app.MapControllers();
+    // app.MapControllers();
+
+    app.UseEndpoints(endpoints =>
+    {
+        endpoints.MapHealthChecks("/hc", new HealthCheckOptions()
+        {
+            Predicate = _ => true,
+            ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+        });
+        endpoints.MapDefaultControllerRoute();
+    });
 
     app.SeedCustomerData()
         .Run();

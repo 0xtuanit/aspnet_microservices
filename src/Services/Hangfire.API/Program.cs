@@ -1,6 +1,8 @@
 using Common.Logging;
 using Hangfire.API.Extensions;
+using HealthChecks.UI.Client;
 using Infrastructure.ScheduledJobs;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Serilog;
 
 // Log.Logger = new LoggerConfiguration()
@@ -23,6 +25,7 @@ try
     builder.Services.AddSwaggerGen();
     builder.Services.AddIonHangfireService();
     builder.Services.ConfigureServices();
+    builder.Services.ConfigureHealthChecks();
 
     var app = builder.Build();
 
@@ -43,7 +46,17 @@ try
     app.UseHangfireDashboard(builder.Configuration);
 
     // app.UseEndpoints(ep => { ep.MapDefaultControllerRoute(); });
-    app.MapDefaultControllerRoute(); // Replace the above line of UseEndpoints with this line
+    // app.MapDefaultControllerRoute(); // Replace the above line of UseEndpoints with this line
+
+    app.UseEndpoints(endpoints =>
+    {
+        endpoints.MapDefaultControllerRoute(); // Automatically adding Home index into Url
+        endpoints.MapHealthChecks("/hc", new HealthCheckOptions()
+        {
+            Predicate = _ => true,
+            ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+        });
+    });
 
     app.Run();
 }

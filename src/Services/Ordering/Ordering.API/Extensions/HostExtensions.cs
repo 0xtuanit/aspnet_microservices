@@ -1,6 +1,3 @@
-using Common.Logging;
-using Serilog;
-
 namespace Ordering.API.Extensions;
 
 public static class HostExtensions

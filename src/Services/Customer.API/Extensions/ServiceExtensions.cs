@@ -7,8 +7,8 @@ using Customer.API.Services.Interfaces;
 using Infrastructure.Common;
 using Infrastructure.Common.Repositories;
 using Infrastructure.Extensions;
-using Infrastructure.Middlewares;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Shared.Configurations;
 
 namespace Customer.API.Extensions;
@@ -46,5 +46,14 @@ public static class ServiceExtensions
             .AddScoped(serviceType: typeof(IUnitOfWork<>), implementationType: typeof(UnitOfWork<>))
             .AddScoped(typeof(IRepositoryQueryBase<,,>), typeof(RepositoryQueryBase<,,>));
         // .AddTransient<ErrorWrappingMiddleware>();
+    }
+
+    public static void ConfigureHealthChecks(this IServiceCollection services)
+    {
+        var databaseSettings = services.GetOptions<DatabaseSettings>(nameof(DatabaseSettings));
+        services.AddHealthChecks()
+            .AddNpgSql(databaseSettings.ConnectionString,
+                name: "PostgresQL Health",
+                failureStatus: HealthStatus.Degraded);
     }
 }
