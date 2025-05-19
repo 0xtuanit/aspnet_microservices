@@ -8,6 +8,7 @@ using Contracts.Common.Interfaces;
 using EventBus.Messages.IntegrationEvents.Interfaces;
 using Infrastructure.Common;
 using Infrastructure.Extensions;
+using Infrastructure.Policies;
 using Inventory.Grpc.Client;
 using MassTransit;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -58,7 +59,11 @@ namespace Basket.API.Extensions
 
         public static void ConfigureHttpClientService(this IServiceCollection services)
         {
-            services.AddHttpClient<BackgroundJobHttpService>().AddHttpMessageHandler<LoggingDelegatingHandler>();
+            services.AddHttpClient<BackgroundJobHttpService>()
+                .AddHttpMessageHandler<LoggingDelegatingHandler>()
+                .UseImmediateHttpRetryPolicy()
+                .UseCircuitBreakerPolicy()
+                .ConfigureTimeoutPolicy(); // Not run more than 5s
         }
 
         public static IServiceCollection ConfigureGrpcServices(this IServiceCollection services)
@@ -68,6 +73,7 @@ namespace Basket.API.Extensions
             {
                 if (settings.StockUrl != null) x.Address = new Uri(settings.StockUrl);
             });
+            // .UseImmediateHttpRetryPolicy(); // Not work yet for gRPC
             services.AddScoped<StockItemGrpcService>();
 
             return services;
