@@ -4,35 +4,35 @@ services:
     image: mcr.microsoft.com/mssql/server:2022-latest
 
   productdb:
-    image: bitnami/mysql:8.4.4
+    image: bitnami/mysql:8.4.5
 
   customerdb:
-    image: bitnami/postgresql:17.4.0
+    image: bitnami/postgresql:17.5.0
 
   basketdb:
-    image: bitnami/redis:7.4.2
+    image: redis:8.0.1-alpine
 
   inventorydb:
-    image: mongodb/mongodb-community-server:8.0.5-ubi9
+    image: mongo:8.0.9
 
   hangfiredb:
-    image: mongodb/mongodb-community-server:8.0.5-ubi9
+    image: mongo:8.0.9
 
   #Infrastructure section
   rabbitmq:
-    image: bitnami/rabbitmq:4.0.7
+    image: rabbitmq:4.1-alpine
 
   pgadmin:
-    image: dpage/pgadmin4:9.1.0
+    image: dpage/pgadmin4:9.3
 
   portainer:
-    image: portainer/portainer-ce:2.27.1
+    image: portainer/portainer-ce:2.30.1-alpine
 
   elasticsearch:
-    image: bitnami/elasticsearch:8.17.3
+    image: bitnami/elasticsearch:8.18.0
 
   kibana:
-    image: bitnami/kibana:8.17.3
+    image: bitnami/kibana:8.18.0
   
   #microservices api section
   product.api:
@@ -58,25 +58,25 @@ services:
     build:
       context: .
       dockerfile: Services/Ordering/Ordering.API/Dockerfile
-      
+  
   inventory.product.api:
     image: ${DOCKER_REGISTRY-}inventory-product-api:${PLATFORM:-linux}-${TAG:-latest}
     build:
       context: .
       dockerfile: Services/Inventory/Inventory.Product.API/Dockerfile
-      
+  
   inventory.grpc:
     image: ${DOCKER_REGISTRY-}inventory-grpc:${PLATFORM:-linux}-${TAG:-latest}
     build:
       context: .
       dockerfile: Services/Inventory/Inventory.Grpc/Dockerfile
-      
+  
   apigw.ocelot:
     image: ${DOCKER_REGISTRY-}apigw-ocelot:${PLATFORM:-linux}-${TAG:-latest}
     build:
       context: .
       dockerfile: ApiGateways/OcelotApiGw/Dockerfile
-      
+  
   hangfire.api:
     image: ${DOCKER_REGISTRY-}hangfire-api:${PLATFORM:-linux}-${TAG:-latest}
     build:
@@ -111,8 +111,6 @@ volumes:
     name: portainer_data
   elasticsearch_data:
     name: elasticsearch_data
-  kibana_data:
-    name: kibana_data
   jaeger_data:
     name: jaeger_data
   mongodb_data:

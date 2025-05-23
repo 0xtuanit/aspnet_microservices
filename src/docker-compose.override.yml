@@ -19,18 +19,24 @@ services:
     environment:
       - MYSQL_ROOT_USER=thomas
       - MYSQL_ROOT_PASSWORD=Admin3000
+    ports:
+      - "3306:3306"
     restart: always
     volumes:
       - mysql_data:/bitnami/mysql/data
-    ports:
-      - "3306:3306"
+    healthcheck:
+      test: [ 'CMD', '/opt/bitnami/scripts/mysql/healthcheck.sh' ]
+      interval: 15s
+      timeout: 5s
+      retries: 6
 
   #customerdb: postgres
   customerdb:
     container_name: customerdb
+    #    user: "1001:1001" # By default
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=Admin3000
+      - POSTGRESQL_USERNAME=postgres
+      - POSTGRESQL_PASSWORD=Admin3000
     restart: always
     ports:
       - "5433:5432"
@@ -40,54 +46,51 @@ services:
   #basketdb: redis
   basketdb:
     container_name: basketdb
-    environment:
+#    environment:
 #      - REDIS_PASSWORD=Admin3000
-      - ALLOW_EMPTY_PASSWORD=yes
+#      - ALLOW_EMPTY_PASSWORD=yes
     restart: always
     ports:
       - "6379:6379"
     volumes:
-      - redis_data:/bitnami/redis/data
+      - redis_data:/usr/local/etc/redis
 
   #inventorydb: mongo
   inventorydb:
     container_name: inventorydb
     environment:
-      - MONGODB_INITDB_ROOT_USERNAME=thomas
-      - MONGODB_INITDB_ROOT_PASSWORD=Admin3000
+      MONGO_INITDB_ROOT_USERNAME: 'admin'
+      MONGO_INITDB_ROOT_PASSWORD: 'admin'
     restart: always
     ports:
       - "27017:27017"
     volumes:
-      - mongodb_data:/var/opt/mongodb
-        
+      - mongodb_data:/data/db
+
   hangfiredb:
     container_name: hangfiredb
     environment:
-      - MONGODB_INITDB_ROOT_USERNAME=thomas
-      - MONGODB_INITDB_ROOT_PASSWORD=Admin3000
+      MONGO_INITDB_ROOT_USERNAME: 'admin'
+      MONGO_INITDB_ROOT_PASSWORD: 'admin'
     restart: always
     ports:
       - "27018:27017"
     volumes:
-      - hangfire_mongo_data:/var/opt/mongodb
+      - hangfire_mongo_data:/data/db
 
   #Infrastructure section
 
   rabbitmq:
     container_name: rabbitmq
     environment:
-      - RABBITMQ_SECURE_PASSWORD=yes
-      - RABBITMQ_USERNAME=thomas
-      - RABBITMQ_PASSWORD=Admin3000
-      - RABBITMQ_MANAGEMENT_ALLOW_WEB_ACCESS=true
-      - RABBITMQ_LOGS=-
+      - RABBITMQ_DEFAULT_USER=thomas
+      - RABBITMQ_DEFAULT_PASS=Admin3000
     restart: always
     ports:
       - "15672:15672"
       - "5672:5672"
     volumes:
-      - rabbitmq_data:/bitnami/rabbitmq/mnesia
+      - rabbitmq_data:/var/lib/rabbitmq/mnesia/
   
   pgadmin:
     container_name: pgadmin
@@ -118,14 +121,14 @@ services:
       - xpack.security.enabled=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
       - discovery.type=single-node
-#      - ELASTIC_USERNAME=elastic #default username
+      - ELASTIC_USERNAME=elastic #default username
       - ELASTIC_PASSWORD=Admin3000
     ports:
       - "9200:9200"
       - "9300:9300"
     volumes:
-      - elasticsearch_data:/bitnami/elasticsearch/data
-  
+      - elasticsearch_data:/usr/share/elasticsearch/data
+
   kibana:
     container_name: kibana
     environment:
@@ -136,8 +139,6 @@ services:
       - elasticsearch
     ports:
       - "5601:5601"
-    volumes:
-      - kibana_data:/bitnami/kibana/data
   
   # microservices api section
   product.api:
@@ -201,7 +202,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:80
-      - "MongoDbSettings:ConnectionString=mongodb://thomas:Admin3000@inventorydb:27017"
+      - "MongoDbSettings:ConnectionString=mongodb://admin:admin@inventorydb:27017"
       - "MongoDbSettings:DatabaseName=InventoryDb"
     depends_on:
       - inventorydb
@@ -214,7 +215,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:80
-      - "MongoDbSettings:ConnectionString=mongodb://thomas:Admin3000@inventorydb:27017"
+      - "MongoDbSettings:ConnectionString=mongodb://admin:admin@inventorydb:27017"
       - "MongoDbSettings:DatabaseName=InventoryDb"
     depends_on:
       - inventorydb
@@ -243,7 +244,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:80
-      - HangfireSettings:Storage:ConnectionString=mongodb://thomas:Admin3000@hangfiredb:27017/hangfire-webapi?authSource=admin
+      - HangfireSettings:Storage:ConnectionString=mongodb://admin:admin@hangfiredb:27017/hangfire-webapi?authSource=admin
     depends_on:
       - hangfiredb
     ports:
