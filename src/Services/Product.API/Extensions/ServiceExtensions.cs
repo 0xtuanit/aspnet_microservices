@@ -69,7 +69,6 @@ public static class ServiceExtensions
         return services.AddScoped(typeof(IRepositoryBase<,,>), typeof(RepositoryBase<,,>))
             .AddScoped(serviceType: typeof(IUnitOfWork<>), implementationType: typeof(UnitOfWork<>))
             .AddScoped<IProductRepository, ProductRepository>();
-        // .AddTransient<ErrorWrappingMiddleware>();
     }
 
     private static void ConfigureHealthChecks(this IServiceCollection services)

@@ -46,7 +46,6 @@ namespace Basket.API.Extensions
                 .AddTransient<ISerializeService, SerializeService>()
                 .AddTransient<IEmailTemplateService, BasketEmailTemplateService>()
                 .AddTransient<LoggingDelegatingHandler>();
-        // .AddTransient<ErrorWrappingMiddleware>();
 
         public static void ConfigureRedis(this IServiceCollection services, IConfiguration configuration)
         {

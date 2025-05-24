@@ -37,6 +37,7 @@ try
     app.UseCors("CorsPolicy");
 
     app.UseMiddleware<ErrorWrappingMiddleware>();
+
     // app.UseAuthentication();
     app.UseRouting();
 

@@ -2,7 +2,6 @@ using Basket.API;
 using Basket.API.Extensions;
 using Common.Logging;
 using HealthChecks.UI.Client;
-using Infrastructure.Middlewares;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Serilog;
 
@@ -49,8 +48,7 @@ try
         app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json",
             $"{builder.Environment.ApplicationName} v1"));
     }
-
-    app.UseMiddleware<ErrorWrappingMiddleware>();
+    
     //app.UseHttpsRedirection();
 
     // app.MapDefaultControllerRoute();

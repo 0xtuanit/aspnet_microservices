@@ -45,7 +45,6 @@ public static class ServiceExtensions
             .AddScoped<ICustomerService, CustomerService>()
             .AddScoped(serviceType: typeof(IUnitOfWork<>), implementationType: typeof(UnitOfWork<>))
             .AddScoped(typeof(IRepositoryQueryBase<,,>), typeof(RepositoryQueryBase<,,>));
-        // .AddTransient<ErrorWrappingMiddleware>();
     }
 
     public static void ConfigureHealthChecks(this IServiceCollection services)

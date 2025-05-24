@@ -4,7 +4,6 @@ using Customer.API.Controllers;
 using Customer.API.Extensions;
 using Customer.API.Persistence;
 using HealthChecks.UI.Client;
-using Infrastructure.Middlewares;
 using Infrastructure.ScheduledJobs;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Serilog;
@@ -59,8 +58,6 @@ try
                 $"{builder.Environment.ApplicationName} v1"));
         });
     }
-
-    app.UseMiddleware<ErrorWrappingMiddleware>();
 
     // app.UseHttpsRedirection(); //production only
     app.UseRouting();

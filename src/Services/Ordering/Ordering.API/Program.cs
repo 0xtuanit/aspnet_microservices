@@ -1,6 +1,5 @@
 using Common.Logging;
 using HealthChecks.UI.Client;
-using Infrastructure.Middlewares;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Ordering.API.Extensions;
 using Ordering.Application;
@@ -52,8 +51,6 @@ try
         await orderContextSeed.InitialiseAsync();
         await orderContextSeed.SeedAsync();
     }
-
-    app.UseMiddleware<ErrorWrappingMiddleware>();
 
     // app.UseHttpsRedirection(); -> for Production only
     app.UseRouting();
