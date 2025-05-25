@@ -1,4 +1,9 @@
-## Micro-services with ASP.NET Core
+## E-commerce application using Microservices with .NET Core
+<div align="center">
+  <img src="https://badges.pufler.dev/visits/0xtuanit/ecommerce_microservices" alt="Years Badge">
+  <img src="https://badges.pufler.dev/updated/0xtuanit/ecommerce_microservices" alt="Repos Badge">
+  <img src="https://badges.pufler.dev/created/0xtuanit/ecommerce_microservices" alt="Gists Badge">
+</div>
 
 ## Prepare environment:
 
